@@ -10,5 +10,95 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_LOCAL")
+}
+
+
+model Users {
+  userId String @id
+  companyName String
+  companyDocument String
+  responsibleName String
+  responsibleDocument String
+  email String
+  cellphone String
+  phone String
+  birthDate DateTime
+  postalCode String
+  streetName String
+  streetNumber String
+  city String
+  state String
+  userPlan String
+  reportsInMonth Int
+  reportsInMonthUsed Int
+  deleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model Sellers {
+  sellerId String @id
+  userId String 
+  name String
+  sellerPassword String
+  document String
+  deleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Products {
+  id String @id @default(uuid())
+  userId String
+  code String
+  name String
+  value Decimal @db.Decimal(10, 2)
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deleted Boolean @default(false)
+}
+
+model Services {
+  id String @id @default(uuid())
+  userId String
+  code String
+  name String
+  value Decimal @db.Decimal(10, 2)
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deleted Boolean @default(false)
+}
+
+model Categories {
+  id String @id @default(uuid())
+  userId String
+  categoryType String
+  code String
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deleted Boolean @default(false)
+}
+
+model Budgets {
+  id String @id @default(uuid())
+  userId String
+  description String
+  value Decimal @db.Decimal(10, 2)
+  expirationDate DateTime
+  clientName String
+  clientDocument String
+  clientEmail String
+  clientPhone String
+  sellerId String
+  budgetPdf String
+  budgetObservation String
+  validationQRCode String
+  budgetType String
+  createdAt DateTime @default(now())
+  deleted Boolean @default(false)
 }
