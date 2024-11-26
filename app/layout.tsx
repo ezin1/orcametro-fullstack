@@ -3,6 +3,9 @@ import { Mulish } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
+import { AppSidebar } from "./_components/app-sidebar";
+import { auth } from "@clerk/nextjs/server";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -13,11 +16,13 @@ export const metadata: Metadata = {
   description: "Orçametro",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId } = await auth();
+
   return (
     <html lang="en">
       <body className={`${mulish.className} dark antialiased`}>
@@ -26,7 +31,21 @@ export default function RootLayout({
             baseTheme: dark,
           }}
         >
-          <div className="flex h-full flex-col overflow-hidden">{children}</div>
+          {!userId ? (
+            <div className="flex h-full flex-col overflow-hidden">
+              {children}
+            </div>
+          ) : (
+            <SidebarProvider>
+              <AppSidebar />
+              <main>
+                <SidebarTrigger />
+                <div className="flex h-full flex-col overflow-hidden">
+                  {children}
+                </div>
+              </main>
+            </SidebarProvider>
+          )}
         </ClerkProvider>
       </body>
     </html>

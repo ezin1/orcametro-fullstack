@@ -1,4 +1,4 @@
-import { UserButton } from "@clerk/nextjs";
+// import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -9,11 +9,7 @@ const HomePage = async () => {
     redirect("/login");
   }
 
-  return (
-    <div className="flex justify-center">
-      <UserButton showName />
-    </div>
-  );
+  return <div className="flex h-full justify-center overflow-hidden"></div>;
 };
 
 export default HomePage;
