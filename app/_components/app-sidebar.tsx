@@ -1,4 +1,12 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  CircleDollarSignIcon,
+  ClipboardList,
+  FileSpreadsheet,
+  Home,
+  Package,
+  Users,
+  Wrench,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,33 +18,44 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
+import Image from "next/image";
 
 // Menu items.
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Orçamentos",
+    url: "/budgets",
+    icon: FileSpreadsheet,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Produtos",
+    url: "/products",
+    icon: Package,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: "Serviços",
+    url: "/services",
+    icon: Wrench,
   },
   {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Categorias",
+    url: "/categories",
+    icon: ClipboardList,
+  },
+  {
+    title: "Vendedores",
+    url: "/sellers",
+    icon: Users,
+  },
+  {
+    title: "Assinaturas",
+    url: "/subscriptions",
+    icon: CircleDollarSignIcon,
   },
 ];
 
@@ -45,7 +64,15 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="mb-4 flex justify-center">
+            <Image
+              src="/logo.png"
+              width={187}
+              height={49}
+              alt="Orçametro"
+              className="mt-3"
+            />
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
