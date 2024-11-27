@@ -11,7 +11,7 @@ const LoginPage = async () => {
     redirect("/");
   }
   return (
-    <div className="grid h-full grid-cols-2">
+    <div className="grid h-screen grid-cols-1 lg:grid-cols-2">
       <div className="mx-auto flex h-full max-w-[550px] flex-col justify-center p-8">
         <Image
           src="/logo.png"
@@ -20,8 +20,10 @@ const LoginPage = async () => {
           alt="Orçametro"
           className="mb-8"
         />
-        <h1 className="mb-3 text-4xl font-bold">Bem-vindo</h1>
-        <p className="mb-8 text-muted-foreground">
+        <h1 className="mb-3 text-3xl font-bold md:text-4xl lg:text-5xl">
+          Bem-vindo
+        </h1>
+        <p className="mb-8 text-sm text-muted-foreground md:text-base lg:text-lg">
           Orçametro é a maneira fácil e rápida de criar orçamentos
           personalizados em minutos. Adicione os itens do orçamento, e nosso
           sistema calculará automaticamente o custo total. Envie seus orçamentos
@@ -31,17 +33,20 @@ const LoginPage = async () => {
         <SignInButton>
           <Button variant="outline">
             <Image src="/google.png" alt="Icone" width={20} height={20} />
-            Fazer login ou criar conta
+            <span className="text-sm md:text-base lg:text-lg">
+              Fazer login ou criar conta
+            </span>
           </Button>
         </SignInButton>
       </div>
 
-      <div className="relative h-full w-full">
+      <div className="relative hidden h-full w-full lg:block">
         <Image
           src="/homeImg.png"
           alt="Faça login"
           fill
-          className="object-cover"
+          className="object-cover object-center"
+          sizes="100vw"
         />
       </div>
     </div>
