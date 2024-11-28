@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URL_LOCAL")
 }
 
-
 model Users {
   userId String @id
   companyName String

@@ -41,7 +41,9 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <main>
-                <SidebarTrigger />
+                <div>
+                  <SidebarTrigger />
+                </div>
                 <div className="flex h-full flex-col overflow-hidden">
                   {children}
                 </div>
