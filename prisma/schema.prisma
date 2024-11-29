@@ -15,6 +15,7 @@ datasource db {
 
 model Users {
   userId String @id
+  isCompany Boolean
   companyName String
   companyDocument String
   responsibleName String
@@ -26,6 +27,7 @@ model Users {
   postalCode String
   streetName String
   streetNumber String
+  neighborhood String
   city String
   state String
   userPlan String
