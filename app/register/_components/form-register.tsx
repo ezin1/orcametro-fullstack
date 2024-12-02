@@ -14,7 +14,7 @@ import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
-import { ScrollArea } from "@/app/_components/ui/scroll-area";
+
 const commonFields = {
   responsibleName: z.string().min(2, {
     message: "Nome do responsável deve conter no mínimo 2 caracteres",
@@ -119,211 +119,205 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 text-base sm:text-lg md:text-sm lg:text-sm"
       >
-        <ScrollArea>
-          <div>
+        <FormField
+          control={form.control}
+          name="isCompany"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-center gap-3">
+              <FormLabel>É uma empresa?</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-1 justify-between gap-6 lg:grid-cols-2">
+          <div className="text-start">
             <FormField
               control={form.control}
-              name="isCompany"
+              name="email"
               render={({ field }) => (
-                <FormItem className="flex flex-col items-center gap-3">
-                  <FormLabel>É uma empresa?</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <Input
+                      className="h-full w-full"
+                      placeholder="teste@gmail.com"
+                      {...field}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-1 justify-between gap-6 lg:grid-cols-2">
-              <div className="text-start">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="h-full w-full"
-                          placeholder="teste@gmail.com"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
 
-                <FormField
-                  control={form.control}
-                  name="responsibleName"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Nome do responsável</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="responsibleDocument"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>CPF do responsável</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cellphone"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Celular</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="birthDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Data de nascimento</FormLabel>
-                      <DatePicker
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="postalCode"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>CEP</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="text-start">
-                <FormField
-                  control={form.control}
-                  name="streetName"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Rua</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="streetNumber"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Número</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="neighborhood"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Bairro</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Cidade</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Estado</FormLabel>
-                      <FormControl>
-                        <Input className="h-full w-full" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                {form.watch("isCompany") && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="companyName"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center gap-3">
-                          <FormLabel>Nome da empresa</FormLabel>
-                          <FormControl>
-                            <Input className="h-full w-full" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                      rules={{ required: form.watch("isCompany") }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="companyDocument"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center gap-3">
-                          <FormLabel>CNPJ da empresa</FormLabel>
-                          <FormControl>
-                            <Input className="h-full w-full" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                      rules={{ required: form.watch("isCompany") }}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
+            <FormField
+              control={form.control}
+              name="responsibleName"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Nome do responsável</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="responsibleDocument"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>CPF do responsável</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cellphone"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Celular</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="birthDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Data de nascimento</FormLabel>
+                  <DatePicker value={field.value} onChange={field.onChange} />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postalCode"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>CEP</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
-        </ScrollArea>
+          <div className="text-start">
+            <FormField
+              control={form.control}
+              name="streetName"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Rua</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="streetNumber"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Número</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="neighborhood"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Bairro</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3">
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <Input className="h-full w-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {form.watch("isCompany") && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel>Nome da empresa</FormLabel>
+                      <FormControl>
+                        <Input className="h-full w-full" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                  rules={{ required: form.watch("isCompany") }}
+                />
+                <FormField
+                  control={form.control}
+                  name="companyDocument"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel>CNPJ da empresa</FormLabel>
+                      <FormControl>
+                        <Input className="h-full w-full" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                  rules={{ required: form.watch("isCompany") }}
+                />
+              </>
+            )}
+          </div>
+        </div>
         <Button type="submit">Registrar</Button>
       </form>
     </Form>
