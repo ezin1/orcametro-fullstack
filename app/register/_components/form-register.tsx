@@ -120,6 +120,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      isCompany: false,
       companyName: "",
       companyDocument: "",
       responsibleName: "",
@@ -327,6 +328,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                       </FormControl>
                     </FormItem>
                   )}
+                  rules={{ required: form.watch("isCompany") }}
                 />
                 <FormField
                   control={form.control}
@@ -339,6 +341,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                       </FormControl>
                     </FormItem>
                   )}
+                  rules={{ required: form.watch("isCompany") }}
                 />
               </>
             )}
