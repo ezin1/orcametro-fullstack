@@ -9,7 +9,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/app/_components/ui/form";
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
@@ -17,7 +16,7 @@ import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
 
 const formSchema = z.object({
-  isCompany: z.boolean(),
+  isCompany: z.boolean().default(false),
   companyName: z
     .string({
       required_error: "Nome da empresa é obrigatório",
@@ -139,8 +138,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
   }
 
@@ -162,7 +159,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -182,7 +178,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -196,7 +191,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -209,7 +203,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -222,7 +215,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -235,7 +227,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -246,7 +237,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Data de nascimento</FormLabel>
                   <DatePicker value={field.value} onChange={field.onChange} />
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -259,7 +249,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -274,7 +263,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -287,7 +275,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -300,7 +287,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -313,7 +299,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -326,7 +311,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   <FormControl>
                     <Input className="h-full w-full" {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -341,7 +325,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                       <FormControl>
                         <Input className="h-full w-full" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -354,7 +337,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                       <FormControl>
                         <Input className="h-full w-full" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -362,7 +344,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
             )}
           </div>
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Registrar</Button>
       </form>
     </Form>
   );
