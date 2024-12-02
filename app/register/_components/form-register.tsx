@@ -135,7 +135,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           )}
         />
 
-        <div className="grid grid-cols-1 justify-between gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 justify-between gap-6 sm:overflow-y-auto lg:grid-cols-2">
           <div className="text-start">
             <FormField
               control={form.control}
