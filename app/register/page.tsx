@@ -21,7 +21,7 @@ const RegisterPage = async () => {
 
   console.log(userEmail);
   return (
-    <div className="absolute grid h-full w-full items-center justify-center p-2">
+    <div className="absolute grid h-full w-full items-center justify-center p-2 text-base sm:text-lg md:text-sm lg:text-sm">
       <Card>
         <CardHeader className="flex items-center">
           <CardTitle>Cadastro</CardTitle>

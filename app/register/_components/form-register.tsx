@@ -146,7 +146,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-2 text-base sm:text-lg md:text-sm lg:text-sm"
+      >
         <FormField
           control={form.control}
           name="isCompany"
@@ -164,16 +167,20 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           )}
         />
 
-        <div className="grid grid-cols-1 justify-between lg:grid-cols-2">
-          <div>
+        <div className="grid grid-cols-1 justify-between gap-6 lg:grid-cols-2">
+          <div className="text-start">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="teste@gmail.com" {...field} />
+                    <Input
+                      className="h-full w-full"
+                      placeholder="teste@gmail.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -184,10 +191,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="responsibleName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Nome do responsável</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -197,10 +204,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="responsibleDocument"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CPF do responsável</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,10 +217,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="cellphone"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Celular</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -223,10 +230,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -236,7 +243,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="birthDate"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Data de nascimento</FormLabel>
                   <DatePicker value={field.value} onChange={field.onChange} />
                   <FormMessage />
@@ -247,7 +254,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="postalCode"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CEP</FormLabel>
                   <FormControl>
                     <Input {...field} />
@@ -257,15 +264,15 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               )}
             />
           </div>
-          <div>
+          <div className="text-start">
             <FormField
               control={form.control}
               name="streetName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Rua</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -275,10 +282,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="streetNumber"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Número</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -288,10 +295,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="neighborhood"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Bairro</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -301,10 +308,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Cidade</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -314,10 +321,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Estado</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input className="h-full w-full" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -329,10 +336,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   control={form.control}
                   name="companyName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel>Nome da empresa</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="h-full w-full" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -342,10 +349,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   control={form.control}
                   name="companyDocument"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel>CNPJ da empresa</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="h-full w-full" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
