@@ -18,7 +18,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
-import Image from "next/image";
 
 // Menu items.
 const items = [
@@ -64,15 +63,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="mb-4 flex justify-center">
-            <Image
-              src="/logo.png"
-              width={187}
-              height={49}
-              alt="Orçametro"
-              className="mt-3"
-            />
-          </SidebarGroupLabel>
+          <SidebarGroupLabel className="mb-4 flex items-center justify-center"></SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
