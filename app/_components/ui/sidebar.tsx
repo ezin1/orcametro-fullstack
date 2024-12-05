@@ -18,8 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
-import { UserButton } from "@clerk/nextjs";
-
+import { UserButton, SignOutButton } from "@clerk/nextjs";
+import { LogOut } from "lucide-react";
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
@@ -389,8 +389,13 @@ const SidebarFooter = React.forwardRef<
       className={cn("flex flex-col gap-2 border-t-2 p-2", className)}
       {...props}
     >
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-4">
         {open ? <UserButton showName /> : <UserButton />}
+        {open && (
+          <SignOutButton>
+            <LogOut className="border-l-2 pl-2" />
+          </SignOutButton>
+        )}
       </div>
     </div>
   );
