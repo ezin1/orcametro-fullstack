@@ -104,10 +104,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   const onSubmit = async (data: FormSchema) => {
     try {
       console.log(data);
-      if (data.isCompany && (!data.companyDocument || !data.companyName)) {
-        alert("Nome da empresa e CNPJ são obrigatórios");
-        return;
-      }
     } catch (error) {
       console.error(error);
     }
@@ -318,7 +314,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
             )}
           </div>
         </div>
-        <Button type="submit">Registrar</Button>
+        <Button
+          type="submit"
+          className="font-bold text-white hover:bg-blue-600"
+        >
+          Registrar
+        </Button>
       </form>
     </Form>
   );
