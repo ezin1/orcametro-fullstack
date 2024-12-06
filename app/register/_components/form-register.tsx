@@ -89,8 +89,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
       responsibleName: "",
       responsibleDocument: "",
       email: userEmail,
-      cellphone: "",
-      phone: "",
+      cellphone: undefined,
+      phone: undefined,
       birthDate: new Date(),
       postalCode: "",
       streetName: "",
@@ -100,6 +100,23 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
       state: "",
     },
   });
+
+  const onChangeFormatNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log(value);
+
+    if (e.target.name === "cellphone") {
+      if (value.length === 11) {
+        e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      }
+    } else if (e.target.name === "phone") {
+      if (value.length === 11) {
+        e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      } else if (value.length === 10) {
+        e.target.value = value.replace(/^(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+      }
+    }
+  };
 
   const onSubmit = async (data: FormSchema) => {
     try {
@@ -181,7 +198,11 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Celular</FormLabel>
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <Input
+                      className="h-full w-full"
+                      {...field}
+                      onChange={(e) => onChangeFormatNumber(e)}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -193,7 +214,11 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <Input
+                      className="h-full w-full"
+                      {...field}
+                      onChange={(e) => onChangeFormatNumber(e)}
+                    />
                   </FormControl>
                 </FormItem>
               )}
