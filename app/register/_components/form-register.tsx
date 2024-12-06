@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,8 @@ import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
+import { AlertDestructive } from "@/app/_components/alert-dialog";
+import { validateCpf } from "@/app/utils/validate-cpf";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -79,7 +82,18 @@ type FormSchema = z.infer<typeof formSchema>;
 interface FormRegisterProps {
   userEmail: string;
 }
+
 export const FormRegister = ({ userEmail }: FormRegisterProps) => {
+  const [formData, setFormData] = useState({
+    cellphone: "",
+    phone: "",
+    responsibleDocument: "",
+    companyDocument: "",
+    postalCode: "",
+  });
+
+  const [showAlert, setShowAlert] = useState(false);
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,8 +103,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
       responsibleName: "",
       responsibleDocument: "",
       email: userEmail,
-      cellphone: undefined,
-      phone: undefined,
+      cellphone: "",
+      phone: "",
       birthDate: new Date(),
       postalCode: "",
       streetName: "",
@@ -102,20 +116,101 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   });
 
   const onChangeFormatNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log(value);
+    const { name, value } = e.target;
+    let formattedValue = value;
 
-    if (e.target.name === "cellphone") {
+    if (name === "cellphone") {
       if (value.length === 11) {
-        e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        formattedValue = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
       }
-    } else if (e.target.name === "phone") {
+    } else if (name === "phone") {
       if (value.length === 11) {
-        e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        formattedValue = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
       } else if (value.length === 10) {
-        e.target.value = value.replace(/^(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+        formattedValue = value.replace(/^(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
       }
     }
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    });
+  };
+
+  const onChangeFormatDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === "responsibleDocument") {
+      if (value.length === 11) {
+        const verifyDocument = validateCpf(value);
+
+        if (!verifyDocument) {
+          form.setError("responsibleDocument", {
+            type: "manual",
+            message: "CPF inválido",
+          });
+        }
+        formattedValue = value.replace(
+          /^(\d{3})(\d{3})(\d{3})(\d{2})/,
+          "$1.$2.$3-$4",
+        );
+      }
+    } else if (name === "companyDocument") {
+      if (value.length === 14) {
+        const verifyDocument = validateCpf(value);
+
+        if (!verifyDocument) {
+          form.setError("companyDocument", {
+            type: "manual",
+            message: "CNPJ inválido",
+          });
+        }
+        formattedValue = value.replace(
+          /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+          "$1.$2.$3/$4-$5",
+        );
+      }
+    }
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    });
+  };
+
+  const onChangeFormatCep = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === "postalCode") {
+      if (value.length === 8) {
+        formattedValue = value.replace(/^(\d{5})(\d{3})/, "$1-$2");
+
+        const consultViaCep = async () => {
+          try {
+            const response = await fetch(
+              `https://viacep.com.br/ws/${value}/json/`,
+            );
+            const data = await response.json();
+
+            form.setValue("streetName", data.logradouro);
+            form.setValue("neighborhood", data.bairro);
+            form.setValue("city", data.localidade);
+            form.setValue("state", data.uf);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+        consultViaCep();
+      }
+    }
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    });
   };
 
   const onSubmit = async (data: FormSchema) => {
@@ -126,8 +221,17 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
     }
   };
 
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [form.formState.errors]);
+
   return (
     <Form {...form}>
+      {showAlert && <AlertDestructive />}
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 text-base sm:text-lg md:text-sm lg:text-sm"
@@ -186,7 +290,15 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CPF do responsável</FormLabel>
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <Input
+                      className="h-full w-full"
+                      {...field}
+                      value={formData.responsibleDocument}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        onChangeFormatDocument(e);
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -201,7 +313,11 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     <Input
                       className="h-full w-full"
                       {...field}
-                      onChange={(e) => onChangeFormatNumber(e)}
+                      value={formData.cellphone}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        onChangeFormatNumber(e);
+                      }}
                     />
                   </FormControl>
                 </FormItem>
@@ -217,7 +333,11 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     <Input
                       className="h-full w-full"
                       {...field}
-                      onChange={(e) => onChangeFormatNumber(e)}
+                      value={formData.phone}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        onChangeFormatNumber(e);
+                      }}
                     />
                   </FormControl>
                 </FormItem>
@@ -240,7 +360,15 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CEP</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      className="h-full w-full"
+                      {...field}
+                      value={formData.postalCode}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        onChangeFormatCep(e);
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -329,7 +457,15 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel>CNPJ da empresa</FormLabel>
                       <FormControl>
-                        <Input className="h-full w-full" {...field} />
+                        <Input
+                          className="h-full w-full"
+                          {...field}
+                          value={formData.companyDocument}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onChangeFormatDocument(e);
+                          }}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
