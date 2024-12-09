@@ -1,26 +1,53 @@
-export function validateCpf(cpf: string): boolean {
-  // Remove caracteres não numéricos
-  const cpfLimpo = cpf.replace(/\D/g, "");
+export function validateCPF(cpf: string | number): boolean {
+  // Replace all non-digit characters with an empty string
+  const strCPF: string = String(cpf).replace(/[^\d]/g, "");
 
-  // Verifica se o CPF tem 11 dígitos
-  if (cpfLimpo.length !== 11) return false;
+  // Check if the length of the CPF is not 11 characters
+  if (strCPF.length !== 11) return false;
 
-  // Verifica se todos os dígitos são iguais (CPF inválido)
-  if (/^(\d)\1+$/.test(cpfLimpo)) return false;
+  // Check if the CPF is one of the known invalid sequences
+  const invalidCPFs: string[] = [
+    "00000000000",
+    "11111111111",
+    "22222222222",
+    "33333333333",
+    "44444444444",
+    "55555555555",
+    "66666666666",
+    "77777777777",
+    "88888888888",
+    "99999999999",
+  ];
 
-  const calcularDigito = (base: string) => {
-    let soma = 0;
-    for (let i = 0; i < base.length; i++) {
-      soma += parseInt(base[i]) * (base.length + 1 - i);
-    }
-    const resto = soma % 11;
-    return resto < 2 ? 0 : 11 - resto;
-  };
+  if (invalidCPFs.includes(strCPF)) return false;
 
-  // Calcula os dígitos verificadores
-  const digito1 = calcularDigito(cpfLimpo.slice(0, 9));
-  const digito2 = calcularDigito(cpfLimpo.slice(0, 9) + digito1);
+  // Calculate the first verification digit
+  let soma: number = 0;
+  let resto: number;
 
-  // Verifica se os dígitos calculados correspondem aos fornecidos
-  return cpfLimpo.endsWith(`${digito1}${digito2}`);
+  for (let i = 1; i <= 9; i++) {
+    soma += parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+  }
+
+  resto = (soma * 10) % 11;
+
+  if (resto === 10 || resto === 11) resto = 0;
+
+  if (resto !== parseInt(strCPF.substring(9, 10))) return false;
+
+  // Calculate the second verification digit
+  soma = 0;
+
+  for (let i = 1; i <= 10; i++) {
+    soma += parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+  }
+
+  resto = (soma * 10) % 11;
+
+  if (resto === 10 || resto === 11) resto = 0;
+
+  if (resto !== parseInt(strCPF.substring(10, 11))) return false;
+
+  // If all checks pass, the CPF is valid
+  return true;
 }

@@ -16,7 +16,7 @@ import { Input } from "@/app/_components/ui/input";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
 import { AlertDestructive } from "@/app/_components/alert-dialog";
-import { validateCpf } from "@/app/utils/validate-cpf";
+import { validateCpf } from "@/app/utils/validate-document";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
