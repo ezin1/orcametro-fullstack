@@ -16,7 +16,16 @@ import { Input } from "@/app/_components/ui/input";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
 import { AlertDestructive } from "@/app/_components/alert-dialog";
-import { validateCpf } from "@/app/utils/validate-document";
+
+import { validateCNPJ } from "@/app/utils/validate-cnpj";
+import { validateCPF } from "@/app/utils/validate-cpf";
+import { CircleAlertIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/_components/ui/tooltip";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -93,6 +102,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   });
 
   const [showAlert, setShowAlert] = useState(false);
+  const [validateCpf, setValidateCpf] = useState(true);
+  const [validateCnpj, setValidateCnpj] = useState(true);
+  const [validateCep, setValidateCep] = useState(true);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -143,33 +155,42 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
 
     if (name === "responsibleDocument") {
       if (value.length === 11) {
-        const verifyDocument = validateCpf(value);
-
+        const verifyDocument = validateCPF(value);
         if (!verifyDocument) {
           form.setError("responsibleDocument", {
             type: "manual",
             message: "CPF inválido",
           });
+          setValidateCpf(false);
         }
         formattedValue = value.replace(
           /^(\d{3})(\d{3})(\d{3})(\d{2})/,
           "$1.$2.$3-$4",
         );
+        if (verifyDocument) {
+          setValidateCpf(true);
+          form.clearErrors("responsibleDocument");
+        }
       }
     } else if (name === "companyDocument") {
       if (value.length === 14) {
-        const verifyDocument = validateCpf(value);
+        const verifyDocument = validateCNPJ(value);
 
         if (!verifyDocument) {
           form.setError("companyDocument", {
             type: "manual",
             message: "CNPJ inválido",
           });
+          setValidateCnpj(false);
         }
         formattedValue = value.replace(
           /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
           "$1.$2.$3/$4-$5",
         );
+        if (verifyDocument) {
+          setValidateCnpj(true);
+          form.clearErrors("companyDocument");
+        }
       }
     }
 
@@ -194,6 +215,19 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
             );
             const data = await response.json();
 
+            if (data.erro) {
+              form.setError("postalCode", {
+                type: "manual",
+                message: "CEP inválido",
+              });
+              setValidateCep(false);
+            }
+
+            if (!data.erro) {
+              setValidateCep(true);
+              form.clearErrors("postalCode");
+            }
+
             form.setValue("streetName", data.logradouro);
             form.setValue("neighborhood", data.bairro);
             form.setValue("city", data.localidade);
@@ -215,6 +249,53 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
 
   const onSubmit = async (data: FormSchema) => {
     try {
+      if (data.isCompany) {
+        const validateCnpj = validateCNPJ(data.companyDocument);
+        const validateCpf = validateCPF(data.responsibleDocument);
+
+        if (!validateCnpj || data.companyDocument === "") {
+          form.setError("companyDocument", {
+            type: "manual",
+            message: "CNPJ inválido",
+          });
+          setValidateCnpj(false);
+        }
+        if (!validateCpf || data.responsibleDocument === "") {
+          form.setError("responsibleDocument", {
+            type: "manual",
+            message: "CPF inválido",
+          });
+          setValidateCpf(false);
+        }
+      } else {
+        const validateCpf = validateCPF(data.responsibleDocument);
+
+        if (!validateCpf || data.responsibleDocument === "") {
+          form.setError("responsibleDocument", {
+            type: "manual",
+            message: "CPF inválido",
+          });
+          setValidateCpf(false);
+        }
+
+        data.companyName = "";
+        data.companyDocument = "";
+      }
+
+      if (!validateCep) {
+        form.setError("postalCode", {
+          type: "manual",
+          message: "CEP inválido",
+        });
+        setValidateCep(false);
+      }
+
+      if (form.formState.errors) {
+        return;
+      } else {
+        console.log("Dados válidos");
+      }
+
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -289,6 +370,19 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CPF do responsável</FormLabel>
+                  {!validateCpf && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger disabled>
+                          {" "}
+                          <CircleAlertIcon className="text-destructive" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Insira um CPF válido!</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                   <FormControl>
                     <Input
                       className="h-full w-full"
@@ -298,6 +392,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         field.onChange(e);
                         onChangeFormatDocument(e);
                       }}
+                      accept="number"
                     />
                   </FormControl>
                 </FormItem>
@@ -359,6 +454,18 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3">
                   <FormLabel>CEP</FormLabel>
+                  {!validateCep && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger disabled>
+                          <CircleAlertIcon className="text-destructive" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Insira um CEP válido!</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                   <FormControl>
                     <Input
                       className="h-full w-full"
@@ -456,6 +563,18 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel>CNPJ da empresa</FormLabel>
+                      {!validateCnpj && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger disabled>
+                              <CircleAlertIcon className="text-destructive" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Insira um CNPJ válido!</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       <FormControl>
                         <Input
                           className="h-full w-full"
