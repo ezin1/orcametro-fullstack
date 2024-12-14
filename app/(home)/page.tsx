@@ -16,7 +16,11 @@ const HomePage = async () => {
     redirect("/register");
   }
 
-  return <div className="flex h-full justify-center overflow-hidden"></div>;
+  return (
+    <div className="flex h-full justify-center overflow-hidden">
+      testeeeeeeeeeeeeee
+    </div>
+  );
 };
 
 export default HomePage;

@@ -8,12 +8,19 @@ import {
 } from "../_components/ui/card";
 import { FormRegister } from "./_components/form-register";
 import { redirect } from "next/navigation";
+import { usersInfo } from "../_data/users-info";
 
 const RegisterPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/login");
+  }
+
+  const userInfo = await usersInfo();
+
+  if (userInfo.verifyIfUserIsRegistered) {
+    redirect("/");
   }
 
   const user = await (await clerkClient()).users.getUser(userId);

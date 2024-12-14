@@ -16,8 +16,8 @@ datasource db {
 model Users {
   userId String @id
   isCompany Boolean
-  companyName String
-  companyDocument String
+  companyName String?
+  companyDocument String?
   responsibleName String
   responsibleDocument String
   email String

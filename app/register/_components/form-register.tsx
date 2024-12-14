@@ -19,13 +19,14 @@ import { AlertDestructive } from "@/app/_components/alert-dialog";
 
 import { validateCNPJ } from "@/app/utils/validate-cnpj";
 import { validateCPF } from "@/app/utils/validate-cpf";
-import { CircleAlertIcon } from "lucide-react";
+import { CircleAlertIcon, Loader2Icon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
+import { usersRegister } from "@/app/_data/users-register";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -86,7 +87,7 @@ const individualSchema = z.object({
 
 const formSchema = z.union([companySchema, individualSchema]);
 
-type FormSchema = z.infer<typeof formSchema>;
+export type FormSchema = z.infer<typeof formSchema>;
 
 interface FormRegisterProps {
   userEmail: string;
@@ -105,7 +106,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   const [validateCpf, setValidateCpf] = useState(true);
   const [validateCnpj, setValidateCnpj] = useState(true);
   const [validateCep, setValidateCep] = useState(true);
-
+  const [registerIsLoading, setRegisterIsLoading] = useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -249,6 +250,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
 
   const onSubmit = async (data: FormSchema) => {
     try {
+      setRegisterIsLoading(true);
       if (data.isCompany) {
         const validateCnpj = validateCNPJ(data.companyDocument);
         const validateCpf = validateCPF(data.responsibleDocument);
@@ -289,16 +291,13 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         });
         setValidateCep(false);
       }
-
-      if (form.formState.errors) {
-        return;
-      } else {
-        console.log("Dados válidos");
-      }
-
       console.log(data);
+
+      await usersRegister(data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setRegisterIsLoading(false);
     }
   };
 
@@ -597,7 +596,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         <Button
           type="submit"
           className="font-bold text-white hover:bg-blue-600"
+          disabled={registerIsLoading}
         >
+          {registerIsLoading && <Loader2Icon className="animate-spin" />}
           Registrar
         </Button>
       </form>
