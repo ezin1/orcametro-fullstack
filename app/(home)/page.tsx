@@ -17,9 +17,7 @@ const HomePage = async () => {
   }
 
   return (
-    <div className="flex h-full justify-center overflow-hidden">
-      testeeeeeeeeeeeeee
-    </div>
+    <div className="flex h-full justify-center overflow-hidden">Home Page</div>
   );
 };
 
