@@ -43,6 +43,8 @@ model Sellers {
   userId String 
   name String
   sellerPassword String
+  sellerStatus SellersStatus 
+  sellerPermission SellerPermission
   document String
   deleted Boolean @default(false)
   createdAt DateTime @default(now())
@@ -101,4 +103,14 @@ model Budgets {
   budgetType String
   createdAt DateTime @default(now())
   deleted Boolean @default(false)
+}
+
+enum SellersStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SellerPermission {
+  ADMIN
+  SELLER
 }
