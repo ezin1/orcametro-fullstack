@@ -39,7 +39,7 @@ const SellersPage = async () => {
             userCanAddTransactions={userCanAddTransactions}
           /> */}
         </div>
-        <div className="w-full overflow-hidden">
+        <div className="w-full">
           <ScrollArea>
             <DataTable
               columns={sellersColumns}
