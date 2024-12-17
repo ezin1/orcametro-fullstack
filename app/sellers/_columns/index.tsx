@@ -17,17 +17,16 @@ export const sellersColumns: ColumnDef<Sellers>[] = [
     accessorKey: "name",
     header: "Nome",
   },
-
   {
     accessorKey: "actions",
     header: "Ações",
     cell: ({}) => {
       return (
-        <div className="space-x-1">
-          <Button>
+        <div className="flex flex-row space-x-1">
+          <Button size="icon">
             <PencilIcon />
           </Button>
-          <Button>
+          <Button size="icon">
             <TrashIcon />
           </Button>
         </div>
