@@ -34,7 +34,7 @@ export default async function RootLayout({
           }}
         >
           {!userId ? (
-            <div className="flex h-full flex-col overflow-hidden">
+            <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
               {children}
             </div>
           ) : (
