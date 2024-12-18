@@ -39,7 +39,7 @@ const SellersPage = async () => {
             userCanAddTransactions={userCanAddTransactions}
           /> */}
         </div>
-        <ScrollArea className="h-[700px] lg:h-[600px] 2xl:h-[820px]">
+        <ScrollArea className="h-[570px] lg:h-[600px] 2xl:h-[820px]">
           <DataTable
             columns={sellersColumns}
             data={JSON.parse(JSON.stringify(sellers))}
