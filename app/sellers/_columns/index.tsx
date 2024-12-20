@@ -24,7 +24,7 @@ export const sellersColumns: ColumnDef<Sellers>[] = [
     cell: ({ row: { original: seller } }) => {
       return (
         <div className="flex flex-row space-x-1">
-          <DrawerEditSeller sellerId={seller.sellerId} />
+          <DrawerEditSeller seller={seller} />
           <Button size="icon">
             <TrashIcon />
           </Button>
