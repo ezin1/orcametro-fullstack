@@ -77,16 +77,19 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
           <form>
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>
-                <DrawerTitle>Editar vendedor</DrawerTitle>
-                <DrawerDescription></DrawerDescription>
+                <DrawerTitle className="font-bold">Editar vendedor</DrawerTitle>
+                <DrawerDescription>
+                  Realize as alterações necessárias e salve para editar seu
+                  vendedor
+                </DrawerDescription>
               </DrawerHeader>
-              <div className="p-4 pb-0">
+              <div className="s p-4 pb-0">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel className="text-sm font-bold">Nome</FormLabel>
                       <FormControl>
                         <Input placeholder="Digite o nome..." {...field} />
                       </FormControl>
@@ -97,8 +100,8 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   control={form.control}
                   name="document"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CPF</FormLabel>
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel className="text-sm font-bold">CPF</FormLabel>
                       <FormControl>
                         <Input placeholder="Digite o CPF..." {...field} />
                       </FormControl>
@@ -109,8 +112,8 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   control={form.control}
                   name="sellerPassword"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel className="text-sm font-bold">Senha</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -125,8 +128,8 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                 control={form.control}
                 name="sellerStatus"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
+                  <FormItem className="flex flex-row items-center gap-3">
+                    <FormLabel className="font-bold text-sm">Status</FormLabel>
                     <FormControl>
 
                     </FormControl>
