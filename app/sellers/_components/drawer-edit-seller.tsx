@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Eye, EyeOff, PencilIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { CircleAlertIcon, Eye, EyeOff, PencilIcon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
 import {
   Drawer,
@@ -36,6 +36,14 @@ import {
   SELLERS_PERMISSIONS_OPTIONS,
   SELLERS_STATUS_OPTIONS,
 } from "@/app/_constants/sellers";
+import { AlertDestructive } from "@/app/_components/alert-dialog";
+import { validateCPF } from "@/app/utils/validate-cpf";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/_components/ui/tooltip";
 
 interface EditSellerDrawerProps {
   seller: {
@@ -65,8 +73,14 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
+  const [formData, setFormData] = useState({
+    document: seller.document,
+    password: seller.sellerPassword,
+  });
   const [isViewPassword, setIsViewPassword] = useState(false);
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [validateCpf, setValidateCpf] = useState(false);
+  const [validatePassword, setValidatePassword] = useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,9 +92,74 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
     },
   });
 
+  const onChangeFormatDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (value.length === 11) {
+      const verifyDocument = validateCPF(value);
+
+      if (!verifyDocument) {
+        form.setError("document", {
+          type: "manual",
+          message: "CPF inválido",
+        });
+        setValidateCpf(false);
+      }
+      formattedValue = value.replace(
+        /^(\d{3})(\d{3})(\d{3})(\d{2})/,
+        "$1.$2.$3-$4",
+      );
+
+      if (verifyDocument) {
+        setValidateCpf(true);
+        form.clearErrors("document");
+      }
+    }
+
+    console.log(formattedValue, "fasdjad");
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    });
+  };
+
+  const onChangeVerifyPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (value.length < 6) {
+      form.setError("sellerPassword", {
+        type: "manual",
+        message: "Senha muito curta",
+      });
+      setValidatePassword(false);
+    } else if (value.length > 6) {
+      form.setError("sellerPassword", {
+        type: "manual",
+        message: "Senha muito longa",
+      });
+      setValidatePassword(false);
+    } else {
+      setValidatePassword(true);
+      form.clearErrors("sellerPassword");
+    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const onSubmit = async (data: FormSchema) => {
     console.log(data);
   };
+
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [form.formState.errors]);
 
   return (
     <Drawer>
@@ -100,6 +179,7 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   vendedor
                 </DrawerDescription>
               </DrawerHeader>
+              {showAlert && <AlertDestructive />}
               <div className="space-y-2 p-4 pb-0">
                 <FormField
                   control={form.control}
@@ -119,8 +199,30 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel className="text-sm font-bold">CPF</FormLabel>
+                      {!validateCpf && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger disabled>
+                              {" "}
+                              <CircleAlertIcon className="text-destructive" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Insira um CPF válido!</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       <FormControl>
-                        <Input placeholder="Digite o CPF..." {...field} />
+                        <Input
+                          placeholder="Digite o CPF..."
+                          {...field}
+                          value={formData.document}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onChangeFormatDocument(e);
+                          }}
+                          accept="number"
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -131,12 +233,30 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel className="text-sm font-bold">Senha</FormLabel>
+                      {!validatePassword && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger disabled>
+                              {" "}
+                              <CircleAlertIcon className="text-destructive" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Insira uma senha de exatamente 6 dígitos!</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       <FormControl>
                         <div className="relative flex-1">
                           <Input
                             type={isViewPassword ? "text" : "password"}
                             placeholder="Digite a senha..."
                             {...field}
+                            value={formData.password}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onChangeVerifyPassword(e);
+                            }}
                           />
                           {isViewPassword ? (
                             <EyeOff
