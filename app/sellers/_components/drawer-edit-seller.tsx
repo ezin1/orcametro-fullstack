@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { PencilIcon } from "lucide-react";
+import React, { useState } from "react";
+import { Eye, EyeOff, PencilIcon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
 import {
   Drawer,
@@ -25,6 +25,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SellersStatus, SellerPermission } from "@prisma/client";
 import { Input } from "@/app/_components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/_components/ui/select";
+import {
+  SELLERS_PERMISSIONS_OPTIONS,
+  SELLERS_STATUS_OPTIONS,
+} from "@/app/_constants/sellers";
 
 interface EditSellerDrawerProps {
   seller: {
@@ -54,6 +65,8 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
+  const [isViewPassword, setIsViewPassword] = useState(false);
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,6 +78,10 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
     },
   });
 
+  const onSubmit = async (data: FormSchema) => {
+    console.log(data);
+  };
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -74,7 +91,7 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
       </DrawerTrigger>
       <DrawerContent>
         <Form {...form}>
-          <form>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>
                 <DrawerTitle className="font-bold">Editar vendedor</DrawerTitle>
@@ -83,7 +100,7 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   vendedor
                 </DrawerDescription>
               </DrawerHeader>
-              <div className="s p-4 pb-0">
+              <div className="space-y-2 p-4 pb-0">
                 <FormField
                   control={form.control}
                   name="name"
@@ -115,27 +132,84 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                     <FormItem className="flex flex-row items-center gap-3">
                       <FormLabel className="text-sm font-bold">Senha</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Digite a senha..."
-                          {...field}
-                        />
+                        <div className="relative flex-1">
+                          <Input
+                            type={isViewPassword ? "text" : "password"}
+                            placeholder="Digite a senha..."
+                            {...field}
+                          />
+                          {isViewPassword ? (
+                            <EyeOff
+                              className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer"
+                              onClick={() => setIsViewPassword(false)}
+                            />
+                          ) : (
+                            <Eye
+                              className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer"
+                              onClick={() => setIsViewPassword(true)}
+                            />
+                          )}
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                control={form.control}
-                name="sellerStatus"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center gap-3">
-                    <FormLabel className="font-bold text-sm">Status</FormLabel>
-                    <FormControl>
-
-                    </FormControl>
-                  </FormItem>
-                )}
-              /> */}
+                <FormField
+                  control={form.control}
+                  name="sellerPermission"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel className="text-sm font-bold">
+                        Permissão
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um tipo de permissão" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SELLERS_PERMISSIONS_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sellerStatus"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3">
+                      <FormLabel className="text-sm font-bold">
+                        Status
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status do vendedor" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SELLERS_STATUS_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
               </div>
               <DrawerFooter className="flex flex-row justify-between">
                 <DrawerClose asChild>
