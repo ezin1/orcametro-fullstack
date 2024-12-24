@@ -45,6 +45,9 @@ export const DatePicker = ({ value, onChange }: DatePickerProps) => {
           onSelect={onChange}
           initialFocus
           locale={ptBR}
+          captionLayout="dropdown-buttons"
+          fromYear={1910}
+          toYear={2100}
         />
       </PopoverContent>
     </Popover>
