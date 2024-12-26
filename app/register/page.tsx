@@ -8,7 +8,7 @@ import {
 } from "../_components/ui/card";
 import { FormRegister } from "./_components/form-register";
 import { redirect } from "next/navigation";
-import { usersInfo } from "../_data/users-info";
+import { usersInfo } from "../_data/users/users-info";
 
 const RegisterPage = async () => {
   const { userId } = await auth();
@@ -26,7 +26,6 @@ const RegisterPage = async () => {
   const user = await (await clerkClient()).users.getUser(userId);
   const userEmail = user.emailAddresses[0].emailAddress;
 
-  console.log(userEmail);
   return (
     <div className="absolute grid h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden p-2 text-base sm:text-lg md:text-sm lg:text-sm">
       <Card>

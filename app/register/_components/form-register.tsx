@@ -26,7 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
-import { usersRegister } from "@/app/_data/users-register";
+import { usersRegister } from "@/app/_data/users/users-register";
 
 const commonFields = {
   responsibleName: z.string().min(2, {

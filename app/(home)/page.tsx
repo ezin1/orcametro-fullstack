@@ -1,7 +1,7 @@
 // import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { usersInfo } from "../_data/users-info";
+import { usersInfo } from "../_data/users/users-info";
 
 const HomePage = async () => {
   const { userId } = await auth();

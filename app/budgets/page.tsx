@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { usersInfo } from "../_data/users-info";
+import { usersInfo } from "../_data/users/users-info";
 
 const BudgetsPage = async () => {
   const { userId } = await auth();

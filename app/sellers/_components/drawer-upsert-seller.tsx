@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import {
   CircleAlertIcon,
@@ -7,6 +5,7 @@ import {
   EyeOff,
   Loader2Icon,
   PencilIcon,
+  UserRoundPlus,
 } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -50,10 +49,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
-import { sellerRegister } from "@/app/_data/seller-register";
+import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
 
-interface EditSellerDrawerProps {
-  seller: {
+interface UpsertSellerDrawerProps {
+  seller?: {
     sellerId: string;
     name: string;
     document: string;
@@ -61,6 +60,7 @@ interface EditSellerDrawerProps {
     sellerStatus: SellersStatus;
     sellerPermission: SellerPermission;
   };
+  isUpdate: boolean;
 }
 
 const formSchema = z.object({
@@ -75,27 +75,32 @@ const formSchema = z.object({
   }),
 });
 
-export type FormSchemaSellerRegister = z.infer<typeof formSchema> & {
-  sellerId: string;
+export type FormSchemaSellerUpsert = z.infer<typeof formSchema> & {
+  sellerId: string | null | undefined;
 };
 
-export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
+export function DrawerUpsertSeller({
+  seller,
+  isUpdate,
+}: UpsertSellerDrawerProps) {
   const [formData, setFormData] = useState({
-    document: seller.document,
-    password: seller.sellerPassword,
+    document: seller?.document || "",
+    password: seller?.sellerPassword || "",
   });
   const [isViewPassword, setIsViewPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [validateCpf, setValidateCpf] = useState(false);
   const [validatePassword, setValidatePassword] = useState(false);
   const [sellerRegisterIsLoading, setSellerRegisterIsLoading] = useState(false);
-  const form = useForm<FormSchemaSellerRegister>({
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const form = useForm<FormSchemaSellerUpsert>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: seller.name,
-      document: seller.document,
-      sellerStatus: seller.sellerStatus,
-      sellerPermission: seller.sellerPermission,
+      name: seller?.name || "",
+      document: seller?.document || "",
+      sellerStatus: seller?.sellerStatus || "ACTIVE",
+      sellerPassword: seller?.sellerPassword || "",
+      sellerPermission: seller?.sellerPermission || "SELLER",
     },
   });
 
@@ -113,6 +118,7 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
         });
         setValidateCpf(false);
       }
+
       formattedValue = value.replace(
         /^(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4",
@@ -123,8 +129,6 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
         form.clearErrors("document");
       }
     }
-
-    console.log(formattedValue, "fasdjad");
 
     setFormData({
       ...formData,
@@ -156,7 +160,7 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
     });
   };
 
-  const onSubmit = async (data: FormSchemaSellerRegister) => {
+  const onSubmit = async (data: FormSchemaSellerUpsert) => {
     try {
       setSellerRegisterIsLoading(true);
 
@@ -189,15 +193,14 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
       if (!verifyDocument || data.sellerPassword.length < 6) {
         return;
       }
-
-      await sellerRegister(data);
+      data = { ...data, sellerId: seller?.sellerId };
+      await sellerUpsert(data);
+      setIsDrawerOpen(false); // Close the drawer after successful submission
     } catch (error) {
       console.error(error);
     } finally {
       setSellerRegisterIsLoading(false);
     }
-
-    await sellerRegister(data);
   };
 
   useEffect(() => {
@@ -209,10 +212,14 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
   }, [form.formState.errors]);
 
   return (
-    <Drawer>
+    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger asChild>
-        <Button size="icon">
-          <PencilIcon />
+        <Button
+          size="icon"
+          className="text-white"
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          {isUpdate ? <PencilIcon /> : <UserRoundPlus />}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -220,10 +227,13 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>
-                <DrawerTitle className="font-bold">Editar vendedor</DrawerTitle>
+                <DrawerTitle className="font-bold">
+                  {isUpdate ? "Editar" : "Cadastrar"} vendedor
+                </DrawerTitle>
                 <DrawerDescription>
-                  Realize as alterações necessárias e salve para editar seu
-                  vendedor
+                  {isUpdate
+                    ? "Realize as alterações necessárias e salve para editar seu vendedor"
+                    : "Preencha os campos abaixo para cadastrar um novo vendedor"}
                 </DrawerDescription>
               </DrawerHeader>
               {showAlert && <AlertDestructive />}
