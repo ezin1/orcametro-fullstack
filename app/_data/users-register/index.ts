@@ -2,10 +2,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/app/_lib/prisma";
 
-import { FormSchema } from "@/app/register/_components/form-register";
+import { FormSchemaUserRegister } from "@/app/register/_components/form-register";
 import { redirect } from "next/navigation";
 
-export const usersRegister = async (data: FormSchema) => {
+export const usersRegister = async (data: FormSchemaUserRegister) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");

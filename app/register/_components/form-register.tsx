@@ -87,7 +87,7 @@ const individualSchema = z.object({
 
 const formSchema = z.union([companySchema, individualSchema]);
 
-export type FormSchema = z.infer<typeof formSchema>;
+export type FormSchemaUserRegister = z.infer<typeof formSchema>;
 
 interface FormRegisterProps {
   userEmail: string;
@@ -107,7 +107,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
   const [validateCnpj, setValidateCnpj] = useState(true);
   const [validateCep, setValidateCep] = useState(true);
   const [registerIsLoading, setRegisterIsLoading] = useState(false);
-  const form = useForm<FormSchema>({
+  const form = useForm<FormSchemaUserRegister>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       isCompany: false,
@@ -248,7 +248,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
     });
   };
 
-  const onSubmit = async (data: FormSchema) => {
+  const onSubmit = async (data: FormSchemaUserRegister) => {
     try {
       setRegisterIsLoading(true);
       if (data.isCompany) {

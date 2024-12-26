@@ -8,7 +8,7 @@ import { cn } from "@/app/_lib/utils";
 import { buttonVariants } from "@/app/_components/ui/button";
 import { format, setMonth } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./select";
-
+import { ptBR } from "date-fns/locale";
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({
@@ -68,19 +68,21 @@ function Calendar({
           if (props.name === "months") {
             const selectItems = Array.from({ length: 12 }, (_, i) => ({
               value: i.toString(),
-              label: format(setMonth(new Date(), i), "MMM"),
+              label: format(setMonth(new Date(), i), "MMM", { locale: ptBR }),
             }));
 
             return (
               <Select
-                onValueChange={(newValue) => {
+                onValueChange={(newValue: string) => {
                   const newDate = new Date(currentMonth);
                   newDate.setMonth(parseInt(newValue));
                   goToMonth(newDate);
                 }}
                 value={props.value?.toString()}
               >
-                <SelectTrigger>{format(currentMonth, "MMM")}</SelectTrigger>
+                <SelectTrigger>
+                  {format(currentMonth, "MMM", { locale: ptBR })}
+                </SelectTrigger>
                 <SelectContent>
                   {selectItems.map((selectItem) => (
                     <SelectItem value={selectItem.value} key={selectItem.value}>
@@ -110,7 +112,7 @@ function Calendar({
 
             return (
               <Select
-                onValueChange={(newValue) => {
+                onValueChange={(newValue: string) => {
                   const newDate = new Date(currentMonth);
                   newDate.setFullYear(parseInt(newValue));
                   goToMonth(newDate);

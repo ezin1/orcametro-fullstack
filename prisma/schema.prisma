@@ -39,7 +39,7 @@ model Users {
 }
 
 model Sellers {
-  sellerId String @id
+  sellerId String @id @default(uuid())
   userId String 
   name String
   sellerPassword String

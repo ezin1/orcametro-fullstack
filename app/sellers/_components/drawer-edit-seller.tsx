@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CircleAlertIcon, Eye, EyeOff, PencilIcon } from "lucide-react";
+import {
+  CircleAlertIcon,
+  Eye,
+  EyeOff,
+  Loader2Icon,
+  PencilIcon,
+} from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
 import {
   Drawer,
@@ -44,9 +50,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
+import { sellerRegister } from "@/app/_data/seller-register";
 
 interface EditSellerDrawerProps {
   seller: {
+    sellerId: string;
     name: string;
     document: string;
     sellerPassword: string;
@@ -58,10 +66,7 @@ interface EditSellerDrawerProps {
 const formSchema = z.object({
   name: z.string().min(3, { message: "Nome muito curto" }),
   document: z.string().length(11, { message: "CPF deve conter 11 caracteres" }),
-  sellerPassword: z
-    .string()
-    .min(6, { message: "Senha muito curta" })
-    .max(6, { message: "Senha muito longa" }),
+  sellerPassword: z.string().min(6, { message: "Senha muito curta" }),
   sellerStatus: z.nativeEnum(SellersStatus, {
     required_error: "Status é obrigatório",
   }),
@@ -70,7 +75,9 @@ const formSchema = z.object({
   }),
 });
 
-type FormSchema = z.infer<typeof formSchema>;
+export type FormSchemaSellerRegister = z.infer<typeof formSchema> & {
+  sellerId: string;
+};
 
 export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
   const [formData, setFormData] = useState({
@@ -81,12 +88,12 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
   const [showAlert, setShowAlert] = useState(false);
   const [validateCpf, setValidateCpf] = useState(false);
   const [validatePassword, setValidatePassword] = useState(false);
-  const form = useForm<FormSchema>({
+  const [sellerRegisterIsLoading, setSellerRegisterIsLoading] = useState(false);
+  const form = useForm<FormSchemaSellerRegister>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller.name,
       document: seller.document,
-      sellerPassword: seller.sellerPassword,
       sellerStatus: seller.sellerStatus,
       sellerPermission: seller.sellerPermission,
     },
@@ -149,8 +156,48 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
     });
   };
 
-  const onSubmit = async (data: FormSchema) => {
-    console.log(data);
+  const onSubmit = async (data: FormSchemaSellerRegister) => {
+    try {
+      setSellerRegisterIsLoading(true);
+
+      const verifyDocument = validateCPF(data.document);
+
+      if (!verifyDocument) {
+        form.setError("document", {
+          type: "manual",
+          message: "CPF inválido",
+        });
+        setValidateCpf(false);
+      }
+
+      if (data.sellerPassword.length < 6) {
+        form.setError("sellerPassword", {
+          type: "manual",
+          message: "Senha muito curta",
+        });
+        setValidatePassword(false);
+      }
+
+      if (data.sellerPassword.length > 6) {
+        form.setError("sellerPassword", {
+          type: "manual",
+          message: "Senha muito longa",
+        });
+        setValidatePassword(false);
+      }
+
+      if (!verifyDocument || data.sellerPassword.length < 6) {
+        return;
+      }
+
+      await sellerRegister(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSellerRegisterIsLoading(false);
+    }
+
+    await sellerRegister(data);
   };
 
   useEffect(() => {
@@ -252,7 +299,6 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                             type={isViewPassword ? "text" : "password"}
                             placeholder="Digite a senha..."
                             {...field}
-                            value={formData.password}
                             onChange={(e) => {
                               field.onChange(e);
                               onChangeVerifyPassword(e);
@@ -336,6 +382,9 @@ export function DrawerEditSeller({ seller }: EditSellerDrawerProps) {
                   <Button variant="outline">Cancelar</Button>
                 </DrawerClose>
                 <Button className="text-white" type="submit">
+                  {sellerRegisterIsLoading && (
+                    <Loader2Icon className="animate-spin" />
+                  )}
                   Salvar
                 </Button>
               </DrawerFooter>
