@@ -9,7 +9,7 @@ export const sellerUpsert = async (data: FormSchemaSellerUpsert) => {
   if (!userId) {
     throw new Error("Unauthorized");
   }
-  console.log(data, "data");
+
   await db.sellers.upsert({
     update: { ...data, userId, sellerId: data.sellerId ?? undefined },
     create: { ...data, userId, sellerId: data.sellerId ?? undefined },

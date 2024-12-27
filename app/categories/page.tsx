@@ -5,6 +5,7 @@ import { ScrollArea } from "../_components/ui/scroll-area";
 import { DataTable } from "../_components/ui/data-table";
 import { categoriesColumns } from "./_columns";
 import { db } from "../_lib/prisma";
+import CreateCategoryButton from "./_components/create-category-button";
 const CategoriesPage = async () => {
   const { userId } = await auth();
 
@@ -34,7 +35,7 @@ const CategoriesPage = async () => {
           <h1 className="text-base font-bold sm:text-sm md:text-lg lg:text-2xl">
             Categorias
           </h1>
-          {/* <CreateCategoryButton /> */}
+          <CreateCategoryButton />
         </div>
         <ScrollArea className="h-[570px] lg:h-[600px] 2xl:h-[820px]">
           <DataTable

@@ -1,9 +1,9 @@
 "use client";
 
-import { DrawerUpsertSeller } from "./drawer-upsert-seller";
+import { DrawerUpsertCategory } from "./drawer-upsert-category";
 
-const CreateSellerButton = () => {
-  return <DrawerUpsertSeller isUpdate={false} />;
+const CreateCategoryButton = () => {
+  return <DrawerUpsertCategory isUpdate={false} />;
 };
 
-export default CreateSellerButton;
+export default CreateCategoryButton;

@@ -195,7 +195,8 @@ export function DrawerUpsertSeller({
       }
       data = { ...data, sellerId: seller?.sellerId };
       await sellerUpsert(data);
-      setIsDrawerOpen(false); // Close the drawer after successful submission
+      setIsDrawerOpen(false);
+      form.reset();
     } catch (error) {
       console.error(error);
     } finally {
