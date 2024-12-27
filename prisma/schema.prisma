@@ -78,7 +78,7 @@ model Services {
 model Categories {
   id String @id @default(uuid())
   userId String
-  categoryType String
+  categoryType CategoryType
   code String
   name String
   createdAt DateTime @default(now())
@@ -113,4 +113,9 @@ enum SellersStatus {
 enum SellerPermission {
   ADMIN
   SELLER
+}
+
+enum CategoryType {
+  PRODUCT
+  SERVICE
 }

@@ -18,10 +18,8 @@ interface DeleteSellerButtonProps {
 }
 
 const DeleteSellerButton = ({ sellerId }: DeleteSellerButtonProps) => {
-  console.log(sellerId, "sellerId");
   const handleConfirmDeleteClick = async () => {
     try {
-      console.log(sellerId, "sellerId");
       await sellerDelete({ sellerId });
     } catch (error) {
       console.error(error);
