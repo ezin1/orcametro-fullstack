@@ -6,6 +6,8 @@ import { dark } from "@clerk/themes";
 import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 import { auth } from "@clerk/nextjs/server";
+import { ThemeProvider } from "./_components/theme-provider";
+import { ModeToggle } from "./_components/mode-toggle";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -27,30 +29,38 @@ export default async function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className={`${mulish.className} dark antialiased`}>
-        <ClerkProvider
-          appearance={{
-            baseTheme: dark,
-          }}
+      <body className={`${mulish.className} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          {!userId ? (
-            <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
-              {children}
-            </div>
-          ) : (
-            <SidebarProvider>
-              <AppSidebar />
-              <main>
-                <div>
-                  <SidebarTrigger />
-                </div>
-                <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
-                  {children}
-                </div>
-              </main>
-            </SidebarProvider>
-          )}
-        </ClerkProvider>
+          <ClerkProvider
+            appearance={{
+              baseTheme: dark,
+            }}
+          >
+            {!userId ? (
+              <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+                {children}
+              </div>
+            ) : (
+              <SidebarProvider>
+                <AppSidebar />
+                <main>
+                  <div>
+                    <SidebarTrigger />
+                  </div>
+                  <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+                    {children}
+                  </div>
+                </main>
+              </SidebarProvider>
+            )}
+            <ModeToggle />
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
