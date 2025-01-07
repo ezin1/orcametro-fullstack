@@ -24,7 +24,7 @@ interface CardPlanProps {
 const CardPlan = ({ plans, userPlan }: CardPlanProps) => {
   return (
     <ScrollArea className="h-[700px]">
-      <div className="mb-28 flex w-full flex-col items-center justify-between gap-6 sm:flex-row md:flex-row lg:flex-row xl:flex-row">
+      <div className="mb-32 flex w-full flex-col items-center justify-between gap-6 sm:flex-row md:flex-row lg:flex-row xl:flex-row">
         {plans.map((plans) => (
           <Card key={plans.name} className="w-[300px]">
             <CardHeader className="relative items-center justify-center">
