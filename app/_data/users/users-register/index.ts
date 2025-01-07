@@ -29,9 +29,9 @@ export const usersRegister = async (data: FormSchemaUserRegister) => {
       neighborhood: data.neighborhood,
       city: data.city,
       state: data.state,
-      userPlan: "basic", // Add default value or get from data
-      reportsInMonth: 0, // Add default value or get from data
-      reportsInMonthUsed: 0, // Add default value or get from data
+      userPlan: "Basic",
+      reportsInMonth: 0,
+      reportsInMonthUsed: 0,
     },
   });
 
