@@ -1,54 +1,59 @@
-"use client";
+// "use client";
 
-import { Button } from "@/app/_components/ui/button";
-import { createStripeCheckout } from "../create-stripe-checkout";
-import { loadStripe } from "@stripe/stripe-js";
-import { useUser } from "@clerk/nextjs";
-import Link from "next/link";
+// import { Button } from "@/app/_components/ui/button";
+// import { createStripeCheckout } from "../create-stripe-checkout";
+// import { loadStripe } from "@stripe/stripe-js";
+// import { useUser } from "@clerk/nextjs";
+// import Link from "next/link";
 
-const AcquirePlanButton = () => {
-  const { user } = useUser();
+// export interface AcquirePlanButtonProps {
+//   userPlan: string;
+//   planName: string;
+// }
 
-  const handleAcquirePlanClick = async () => {
-    const { sessionId } = await createStripeCheckout();
+// const AcquirePlanButton = ({userPlan, planName}: AcquirePlanButtonProps ) => {
+//   const { user } = useUser();
 
-    if (!process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY) {
-      throw new Error("Stripe publishable key is missing");
-    }
+//   const handleAcquirePlanClick = async () => {
+//     const { sessionId } = await createStripeCheckout(planName);
+//     console.log(userPlan)
+//     if (!process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY) {
+//       throw new Error("Stripe publishable key is missing");
+//     }
 
-    const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY,
-    );
+//     const stripe = await loadStripe(
+//       process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY,
+//     );
 
-    if (!stripe) {
-      throw new Error("Stripe not found");
-    }
+//     if (!stripe) {
+//       throw new Error("Stripe not found");
+//     }
 
-    await stripe.redirectToCheckout({ sessionId });
-  };
+//     await stripe.redirectToCheckout({ sessionId });
+//   };
 
-  const hasPremiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
+//   const hasUserPlan = user?.publicMetadata.subscriptionPlan === userPlan;
 
-  if (hasPremiumPlan) {
-    return (
-      <Button className="w-full rounded-full border font-bold" variant="link">
-        <Link
-          href={`${process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL as string}?prefilled_email=${user.emailAddresses[0].emailAddress}`}
-        >
-          Gerenciar plano
-        </Link>
-      </Button>
-    );
-  }
+//   if (hasUserPlan) {
+//     return (
+//       <Button className="w-full rounded-full border font-bold" variant="link">
+//         <Link
+//           href={`${process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL as string}?prefilled_email=${user.emailAddresses[0].emailAddress}`}
+//         >
+//           Gerenciar plano
+//         </Link>
+//       </Button>
+//     );
+//   }
 
-  return (
-    <Button
-      className="w-full rounded-full border font-bold"
-      onClick={handleAcquirePlanClick}
-    >
-      Adquirir plano
-    </Button>
-  );
-};
+//   return (
+//     <Button
+//       className="w-full rounded-full border font-bold text-white"
+//       onClick={handleAcquirePlanClick}
+//     >
+//       Adquirir plano
+//     </Button>
+//   );
+// };
 
-export default AcquirePlanButton;
+// export default AcquirePlanButton;

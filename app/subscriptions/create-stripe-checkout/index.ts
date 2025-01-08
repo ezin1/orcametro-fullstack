@@ -1,39 +1,41 @@
-"use server";
+// "use server";
 
-import { auth } from "@clerk/nextjs/server";
-import Stripe from "stripe";
-export const createStripeCheckout = async () => {
-  const { userId } = await auth();
+// import { auth } from "@clerk/nextjs/server";
+// import Stripe from "stripe";
+// import { AcquirePlanButtonProps } from "../_components/acquire-plan-button";
 
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
+// export const createStripeCheckout = async ({planName}: AcquirePlanButtonProps) => {
+//   const { userId } = await auth();
 
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("Stripe secret key is missing");
-  }
+//   if (!userId) {
+//     throw new Error("Unauthorized");
+//   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-10-28.acacia",
-  });
+//   if (!process.env.STRIPE_SECRET_KEY) {
+//     throw new Error("Stripe secret key is missing");
+//   }
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    mode: "subscription",
-    success_url: process.env.APP_URL,
-    cancel_url: process.env.APP_URL,
-    subscription_data: {
-      metadata: {
-        clerk_user_id: userId,
-      },
-    },
-    line_items: [
-      {
-        price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID,
-        quantity: 1,
-      },
-    ],
-  });
+//   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+//     apiVersion: "2024-12-18.acacia",
+//   });
 
-  return { sessionId: session.id };
-};
+//   const session = await stripe.checkout.sessions.create({
+//     payment_method_types: ["card"],
+//     mode: "subscription",
+//     success_url: process.env.APP_URL,
+//     cancel_url: process.env.APP_URL,
+//     subscription_data: {
+//       metadata: {
+//         clerk_user_id: userId,
+//       },
+//     },
+//     line_items: [
+//       {
+//         price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID,
+//         quantity: 1,
+//       },
+//     ],
+//   });
+
+//   return { sessionId: session.id };
+// };

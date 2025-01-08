@@ -1,5 +1,6 @@
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
 } from "@/app/_components/ui/card";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { CheckIcon } from "lucide-react";
+// import AcquirePlanButton from "./acquire-plan-button";
 
 interface CardPlanProps {
   plans: {
@@ -71,6 +73,7 @@ const CardPlan = ({ plans, userPlan }: CardPlanProps) => {
               >
                 {userPlan === plans.name ? "Gerenciar plano" : "Contratar"}
               </Button>
+              {/* <AcquirePlanButton userPlan={userPlan} planName={plans.name}/> */}
             </CardFooter>
           </Card>
         ))}
