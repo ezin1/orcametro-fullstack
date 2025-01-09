@@ -31,15 +31,13 @@ export const POST = async (request: Request) => {
       if (!clerkUserId) {
         return NextResponse.error();
       }
+
       await (
         await clerkClient()
       ).users.updateUser(clerkUserId, {
         privateMetadata: {
           stripeCustomerId: customer,
           stripeSubscriptionId: subscription,
-        },
-        publicMetadata: {
-          subscriptionPlan: "Basic",
         },
       });
       break;

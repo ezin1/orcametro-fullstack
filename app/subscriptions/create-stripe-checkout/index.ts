@@ -21,23 +21,65 @@ export const createStripeCheckout = async ({
     apiVersion: "2024-12-18.acacia",
   });
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    mode: "subscription",
-    success_url: process.env.APP_URL,
-    cancel_url: process.env.APP_URL,
-    subscription_data: {
-      metadata: {
-        clerk_user_id: userId,
+  if (planName === "Basic") {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "subscription",
+      success_url: process.env.APP_URL,
+      cancel_url: process.env.APP_URL,
+      subscription_data: {
+        metadata: {
+          clerk_user_id: userId,
+        },
       },
-    },
-    line_items: [
-      {
-        price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID_BASIC,
-        quantity: 1,
-      },
-    ],
-  });
+      line_items: [
+        {
+          price: process.env.STRIPE_BASIC_PLAN_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+    });
 
-  return { sessionId: session.id };
+    return { sessionId: session.id };
+  } else if (planName === "Standard") {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "subscription",
+      success_url: process.env.APP_URL,
+      cancel_url: process.env.APP_URL,
+      subscription_data: {
+        metadata: {
+          clerk_user_id: userId,
+        },
+      },
+      line_items: [
+        {
+          price: process.env.STRIPE_STANDARD_PLAN_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+    });
+
+    return { sessionId: session.id };
+  } else if (planName === "Premium") {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "subscription",
+      success_url: process.env.APP_URL,
+      cancel_url: process.env.APP_URL,
+      subscription_data: {
+        metadata: {
+          clerk_user_id: userId,
+        },
+      },
+      line_items: [
+        {
+          price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+    });
+
+    return { sessionId: session.id };
+  }
 };

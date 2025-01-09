@@ -47,7 +47,7 @@ const SubscripionsPage = async () => {
         </h1>
       </div>
       <div>
-        <CardPlan plans={arrayPlans} userPlan={userPlan} />
+        <CardPlan plans={arrayPlans} userPlan={userPlan} userId={userId} />
       </div>
     </div>
   );

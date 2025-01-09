@@ -1,3 +1,4 @@
+"use client";
 import { Badge } from "@/app/_components/ui/badge";
 // import { Button } from "@/app/_components/ui/button";
 
@@ -12,6 +13,7 @@ import {
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { CheckIcon } from "lucide-react";
 import AcquirePlanButton from "./acquire-plan-button";
+import { useUser } from "@clerk/nextjs";
 
 interface CardPlanProps {
   plans: {
@@ -21,16 +23,18 @@ interface CardPlanProps {
     features: string[];
   }[];
   userPlan: string;
+  userId: string;
 }
 
-const CardPlan = ({ plans, userPlan }: CardPlanProps) => {
+const CardPlan = ({ plans, userPlan, userId }: CardPlanProps) => {
+  const { user } = useUser();
   return (
     <ScrollArea className="h-[700px]">
       <div className="mb-36 flex w-full flex-col items-center justify-between gap-6 sm:flex-row md:flex-row lg:flex-row xl:flex-row">
         {plans.map((plans) => (
           <Card key={plans.name} className="w-[300px]">
             <CardHeader className="relative items-center justify-center">
-              {userPlan === plans.name ? (
+              {user?.publicMetadata.subscriptionPlan === plans.name ? (
                 <Badge className="absolute right-4 top-4 bg-primary text-white">
                   Seu plano
                 </Badge>
@@ -73,7 +77,11 @@ const CardPlan = ({ plans, userPlan }: CardPlanProps) => {
               >
                 {userPlan === plans.name ? "Gerenciar plano" : "Contratar"}
               </Button> */}
-              <AcquirePlanButton userPlan={userPlan} planName={plans.name} />
+              <AcquirePlanButton
+                userPlan={userPlan}
+                planName={plans.name}
+                userId={userId}
+              />
             </CardFooter>
           </Card>
         ))}
