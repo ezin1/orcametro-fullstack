@@ -7,6 +7,7 @@ export const POST = async (request: Request) => {
     return NextResponse.error();
   }
   const signature = request.headers.get("stripe-signature");
+
   if (!signature) {
     return NextResponse.error();
   }
@@ -14,6 +15,7 @@ export const POST = async (request: Request) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2024-12-18.acacia",
   });
+
   const event = stripe.webhooks.constructEvent(
     text,
     signature,
@@ -37,7 +39,7 @@ export const POST = async (request: Request) => {
           stripeSubscriptionId: subscription,
         },
         publicMetadata: {
-          subscriptionPlan: "premium",
+          subscriptionPlan: "Basic",
         },
       });
       break;

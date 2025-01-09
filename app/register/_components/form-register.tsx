@@ -291,7 +291,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         });
         setValidateCep(false);
       }
-      console.log(data);
 
       await usersRegister(data);
     } catch (error) {

@@ -80,7 +80,6 @@ export function DrawerUpsertCategory({
 
   const onSubmit = async (data: FormSchemaCategoryUpsert) => {
     try {
-      console.log(data);
       setCategoryRegisterIsLoading(true);
       data = { ...data, id: category?.id };
       await categoryUpsert(data);

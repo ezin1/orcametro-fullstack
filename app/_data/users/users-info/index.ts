@@ -15,7 +15,5 @@ export const usersInfo = async () => {
     },
   });
 
-  console.log(verifyIfUserIsRegistered, "verifyIfUserIsRegistered");
-
   return { verifyIfUserIsRegistered };
 };
