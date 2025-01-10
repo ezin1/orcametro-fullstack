@@ -8,6 +8,7 @@ import { AppSidebar } from "./_components/app-sidebar";
 import { auth } from "@clerk/nextjs/server";
 import { ThemeProvider } from "./_components/theme-provider";
 import { ModeToggle } from "./_components/mode-toggle";
+import { Toaster } from "./_components/ui/toaster";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -44,6 +45,7 @@ export default async function RootLayout({
             {!userId ? (
               <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                 {children}
+                <Toaster />
               </div>
             ) : (
               <SidebarProvider>
@@ -54,6 +56,7 @@ export default async function RootLayout({
                   </div>
                   <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                     {children}
+                    <Toaster />
                   </div>
                 </main>
               </SidebarProvider>
