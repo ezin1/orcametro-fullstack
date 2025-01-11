@@ -1,12 +1,27 @@
 "use client";
 
 import { Button } from "@/app/_components/ui/button";
-import { createStripeCheckout } from "../create-stripe-checkout";
+import {
+  cancelUserSubscription,
+  createStripeCheckout,
+} from "../create-stripe-checkout";
 import { loadStripe } from "@stripe/stripe-js";
 import { useUser } from "@clerk/nextjs";
-import Link from "next/link";
 import updateUserPlanClerk from "./updateUserPlanClerk";
 import { useToast } from "@/app/_hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/app/_components/ui/alert-dialog";
+import { Loader2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export interface AcquirePlanButtonProps {
   userPlan: string;
@@ -19,11 +34,21 @@ const AcquirePlanButton = ({
   planName,
   userId,
 }: AcquirePlanButtonProps) => {
+  const [cancelIsLoading, setCancelIsLoading] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
 
   const handleCancelPlanClick = async () => {
-    await updateUserPlanClerk(userId, "");
+    setCancelIsLoading(true);
+    const result = await cancelUserSubscription(userId);
+    if (!result) {
+      throw new Error("Failed to cancel subscription");
+    }
+
+    setTimeout(() => {
+      setCancelIsLoading(false);
+    }, 5000);
+
     toast({
       title: "Sucesso",
       description: "Plano cancelado com sucesso.",
@@ -62,23 +87,56 @@ const AcquirePlanButton = ({
 
     await updateUserPlanClerk(userId, planName);
     await stripe.redirectToCheckout({ sessionId });
+
+    toast({
+      title: "Sucesso",
+      description: "Plano contratado com sucesso.",
+    });
   };
 
   const hasUserPlan = user?.publicMetadata.subscriptionPlan === planName;
 
+  useEffect(() => {
+    if (cancelIsLoading) {
+      toast({
+        title: "Cancelando plano",
+        description: "Aguarde um momento...",
+      });
+    }
+  }, [cancelIsLoading, toast]);
+
   if (hasUserPlan) {
     return (
-      <Button
-        className="w-full rounded-full border font-bold"
-        variant="link"
-        onClick={handleCancelPlanClick}
-      >
-        <Link
-          href={`${process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL as string}?prefilled_email=${user.emailAddresses[0].emailAddress}`}
-        >
-          Gerenciar plano
-        </Link>
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            className="w-full rounded-full border font-bold"
+            variant="link"
+          >
+            Gerenciar plano
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Você deseja realmente cancelar seu plano?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelPlanClick}
+              className="primary text-white"
+            >
+              Encerrar assinatura
+              {cancelIsLoading && <Loader2Icon className="animate-spin" />}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 
