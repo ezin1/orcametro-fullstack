@@ -12,7 +12,6 @@ import {
   FormLabel,
 } from "@/app/_components/ui/form";
 import { Button } from "@/app/_components/ui/button";
-import { Input } from "@/app/_components/ui/input";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
 import { AlertDestructive } from "@/app/_components/alert-dialog";
@@ -27,6 +26,7 @@ import {
   TooltipTrigger,
 } from "@/app/_components/ui/tooltip";
 import { usersRegister } from "@/app/_data/users/users-register";
+import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -319,7 +319,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           control={form.control}
           name="isCompany"
           render={({ field }) => (
-            <FormItem className="flex flex-col items-center gap-3">
+            <FormItem className="flex flex-row items-center justify-center gap-3">
               <FormLabel>É uma empresa?</FormLabel>
               <FormControl>
                 <Switch
@@ -331,20 +331,15 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           )}
         />
 
-        <div className="grid grid-cols-1 justify-between gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 justify-between gap-10 lg:grid-cols-2">
           <div className="text-start">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Email</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input
-                      className="h-full w-full"
-                      placeholder="teste@gmail.com"
-                      {...field}
-                    />
+                    <InputLabelInBorder label="Email" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -354,10 +349,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="responsibleName"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Nome do responsável</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder
+                      label="Nome do responsável"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -366,8 +363,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="responsibleDocument"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>CPF do responsável</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   {!validateCpf && (
                     <TooltipProvider>
                       <Tooltip>
@@ -382,8 +378,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     </TooltipProvider>
                   )}
                   <FormControl>
-                    <Input
-                      className="h-full w-full"
+                    <InputLabelInBorder
+                      label="CPF do responsável"
                       {...field}
                       value={formData.responsibleDocument}
                       onChange={(e) => {
@@ -400,11 +396,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="cellphone"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Celular</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input
-                      className="h-full w-full"
+                    <InputLabelInBorder
+                      label="Celular"
                       {...field}
                       value={formData.cellphone}
                       onChange={(e) => {
@@ -420,11 +415,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Telefone</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input
-                      className="h-full w-full"
+                    <InputLabelInBorder
+                      label="Telefone"
                       {...field}
                       value={formData.phone}
                       onChange={(e) => {
@@ -440,9 +434,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="birthDate"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Data de nascimento</FormLabel>
-                  <DatePicker value={field.value} onChange={field.onChange} />
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
+                  <DatePicker
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Data de Nascimento"
+                  />
                 </FormItem>
               )}
             />
@@ -450,8 +447,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="postalCode"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>CEP</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   {!validateCep && (
                     <TooltipProvider>
                       <Tooltip>
@@ -465,8 +461,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     </TooltipProvider>
                   )}
                   <FormControl>
-                    <Input
-                      className="h-full w-full"
+                    <InputLabelInBorder
+                      label="CEP"
                       {...field}
                       value={formData.postalCode}
                       onChange={(e) => {
@@ -484,10 +480,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="streetName"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Rua</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder label="Rua" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -496,10 +491,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="streetNumber"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Número</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder label="Número" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -508,10 +502,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="neighborhood"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Bairro</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder label="Bairro" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -520,10 +513,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Cidade</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder label="Cidade" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -532,10 +524,9 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3">
-                  <FormLabel>Estado</FormLabel>
+                <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <Input className="h-full w-full" {...field} />
+                    <InputLabelInBorder label="Estado" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -546,10 +537,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   control={form.control}
                   name="companyName"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>Nome da empresa</FormLabel>
+                    <FormItem className="flex flex-row items-center gap-3 pt-3">
                       <FormControl>
-                        <Input className="h-full w-full" {...field} />
+                        <InputLabelInBorder
+                          label="Nome da empresa"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -559,8 +552,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   control={form.control}
                   name="companyDocument"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel>CNPJ da empresa</FormLabel>
+                    <FormItem className="flex flex-row items-center gap-3 pt-3">
                       {!validateCnpj && (
                         <TooltipProvider>
                           <Tooltip>
@@ -574,8 +566,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         </TooltipProvider>
                       )}
                       <FormControl>
-                        <Input
-                          className="h-full w-full"
+                        <InputLabelInBorder
+                          label="CNPJ da empresa"
                           {...field}
                           value={formData.companyDocument}
                           onChange={(e) => {

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ptBR } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/app/_lib/utils";
 import { Button } from "./button";
@@ -13,9 +13,10 @@ import { SelectSingleEventHandler } from "react-day-picker";
 interface DatePickerProps {
   value: Date;
   onChange?: SelectSingleEventHandler;
+  label?: string;
 }
 
-export const DatePicker = ({ value, onChange }: DatePickerProps) => {
+export const DatePicker = ({ value, onChange, label }: DatePickerProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -24,8 +25,14 @@ export const DatePicker = ({ value, onChange }: DatePickerProps) => {
           className={cn(
             "w-full justify-start text-left font-normal",
             !value && "text-muted-foreground",
+            "relative pt-4", // Added padding-top to accommodate the label
           )}
         >
+          {label && (
+            <span className="absolute left-3 top-0 -translate-y-1/2 bg-background px-1 text-xs font-semibold text-muted-foreground">
+              {label}
+            </span>
+          )}
           <CalendarIcon className="mr-2 h-4 w-4" />
           {value ? (
             new Date(value).toLocaleDateString("pt-BR", {
