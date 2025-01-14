@@ -28,7 +28,7 @@ const RegisterPage = async () => {
 
   return (
     <div className="absolute grid h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden p-2 text-base sm:text-lg md:text-sm lg:text-sm">
-      <Card>
+      <Card className="mb-8">
         <CardHeader className="flex items-center">
           <CardTitle>Cadastro</CardTitle>
           <CardDescription>

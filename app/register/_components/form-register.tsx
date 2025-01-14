@@ -14,19 +14,14 @@ import {
 import { Button } from "@/app/_components/ui/button";
 import { DatePicker } from "@/app/_components/ui/date-picker";
 import { Switch } from "@/app/_components/ui/switch";
-import { AlertDestructive } from "@/app/_components/alert-dialog";
 
 import { validateCNPJ } from "@/app/utils/validate-cnpj";
 import { validateCPF } from "@/app/utils/validate-cpf";
-import { CircleAlertIcon, Loader2Icon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/app/_components/ui/tooltip";
+import { Loader2Icon } from "lucide-react";
+
 import { usersRegister } from "@/app/_data/users/users-register";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
+import { useToast } from "@/app/_hooks/use-toast";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -102,7 +97,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
     postalCode: "",
   });
 
-  const [showAlert, setShowAlert] = useState(false);
   const [validateCpf, setValidateCpf] = useState(true);
   const [validateCnpj, setValidateCnpj] = useState(true);
   const [validateCep, setValidateCep] = useState(true);
@@ -127,6 +121,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
       state: "",
     },
   });
+  const { toast } = useToast();
 
   const onChangeFormatNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -302,15 +297,16 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
-      setShowAlert(true);
-    } else {
-      setShowAlert(false);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Preencha todos os campos obrigatórios corretamente.",
+      });
     }
-  }, [form.formState.errors]);
+  }, [form.formState.errors, toast]);
 
   return (
     <Form {...form}>
-      {showAlert && <AlertDestructive />}
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 text-base sm:text-lg md:text-sm lg:text-sm"
@@ -319,7 +315,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           control={form.control}
           name="isCompany"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-center gap-3">
+            <FormItem className="flex flex-row items-center justify-center gap-3 text-center">
               <FormLabel>É uma empresa?</FormLabel>
               <FormControl>
                 <Switch
@@ -331,15 +327,20 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
           )}
         />
 
-        <div className="grid grid-cols-1 justify-between gap-10 lg:grid-cols-2">
-          <div className="text-start">
+        <div className="grid grid-cols-1 justify-between lg:grid-cols-2 lg:gap-10">
+          <div className="space-y-3 text-start">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <InputLabelInBorder label="Email" {...field} />
+                    <InputLabelInBorder
+                      label="Email"
+                      {...field}
+                      error={!!form.formState.errors.email}
+                      errorMessage={form.formState.errors.email?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -354,6 +355,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                     <InputLabelInBorder
                       label="Nome do responsável"
                       {...field}
+                      error={!!form.formState.errors.responsibleName}
+                      errorMessage={
+                        form.formState.errors.responsibleName?.message
+                      }
                     />
                   </FormControl>
                 </FormItem>
@@ -364,19 +369,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               name="responsibleDocument"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
-                  {!validateCpf && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger disabled>
-                          {" "}
-                          <CircleAlertIcon className="text-destructive" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Insira um CPF válido!</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
                   <FormControl>
                     <InputLabelInBorder
                       label="CPF do responsável"
@@ -387,6 +379,14 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         onChangeFormatDocument(e);
                       }}
                       accept="number"
+                      error={
+                        !validateCpf ||
+                        !!form.formState.errors.responsibleDocument
+                      }
+                      errorMessage={
+                        form.formState.errors.responsibleDocument?.message ||
+                        "CPF inválido"
+                      }
                     />
                   </FormControl>
                 </FormItem>
@@ -406,6 +406,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         field.onChange(e);
                         onChangeFormatNumber(e);
                       }}
+                      error={!!form.formState.errors.cellphone}
+                      errorMessage={form.formState.errors.cellphone?.message}
                     />
                   </FormControl>
                 </FormItem>
@@ -425,6 +427,8 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         field.onChange(e);
                         onChangeFormatNumber(e);
                       }}
+                      error={!!form.formState.errors.phone}
+                      errorMessage={form.formState.errors.phone?.message}
                     />
                   </FormControl>
                 </FormItem>
@@ -448,18 +452,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               name="postalCode"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
-                  {!validateCep && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger disabled>
-                          <CircleAlertIcon className="text-destructive" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Insira um CEP válido!</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
                   <FormControl>
                     <InputLabelInBorder
                       label="CEP"
@@ -469,20 +461,30 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         field.onChange(e);
                         onChangeFormatCep(e);
                       }}
+                      error={!validateCep || !!form.formState.errors.postalCode}
+                      errorMessage={
+                        form.formState.errors.postalCode?.message ||
+                        "CEP inválido"
+                      }
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
-          <div className="text-start">
+          <div className="space-y-3 pt-6 text-start lg:pt-3">
             <FormField
               control={form.control}
               name="streetName"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-3 pt-3">
+                <FormItem className="flex flex-row items-center gap-3">
                   <FormControl>
-                    <InputLabelInBorder label="Rua" {...field} />
+                    <InputLabelInBorder
+                      label="Rua"
+                      {...field}
+                      error={!!form.formState.errors.streetName}
+                      errorMessage={form.formState.errors.streetName?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -493,7 +495,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <InputLabelInBorder label="Número" {...field} />
+                    <InputLabelInBorder
+                      label="Número"
+                      {...field}
+                      error={!!form.formState.errors.streetNumber}
+                      errorMessage={form.formState.errors.streetNumber?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -504,7 +511,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <InputLabelInBorder label="Bairro" {...field} />
+                    <InputLabelInBorder
+                      label="Bairro"
+                      {...field}
+                      error={!!form.formState.errors.neighborhood}
+                      errorMessage={form.formState.errors.neighborhood?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -515,7 +527,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <InputLabelInBorder label="Cidade" {...field} />
+                    <InputLabelInBorder
+                      label="Cidade"
+                      {...field}
+                      error={!!form.formState.errors.city}
+                      errorMessage={form.formState.errors.city?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -526,7 +543,12 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-3 pt-3">
                   <FormControl>
-                    <InputLabelInBorder label="Estado" {...field} />
+                    <InputLabelInBorder
+                      label="Estado"
+                      {...field}
+                      error={!!form.formState.errors.state}
+                      errorMessage={form.formState.errors.state?.message}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -542,6 +564,10 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                         <InputLabelInBorder
                           label="Nome da empresa"
                           {...field}
+                          error={!!form.formState.errors.companyName}
+                          errorMessage={
+                            form.formState.errors.companyName?.message
+                          }
                         />
                       </FormControl>
                     </FormItem>
@@ -553,18 +579,6 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                   name="companyDocument"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center gap-3 pt-3">
-                      {!validateCnpj && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger disabled>
-                              <CircleAlertIcon className="text-destructive" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Insira um CNPJ válido!</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
                       <FormControl>
                         <InputLabelInBorder
                           label="CNPJ da empresa"
@@ -574,6 +588,14 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
                             field.onChange(e);
                             onChangeFormatDocument(e);
                           }}
+                          error={
+                            !validateCnpj ||
+                            !!form.formState.errors.companyDocument
+                          }
+                          errorMessage={
+                            form.formState.errors.companyDocument?.message ||
+                            "CNPJ inválido"
+                          }
                         />
                       </FormControl>
                     </FormItem>
