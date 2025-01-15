@@ -1,6 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import {
-  CircleAlertIcon,
   Eye,
   EyeOff,
   Loader2Icon,
@@ -23,18 +24,15 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
 } from "@/app/_components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SellersStatus, SellerPermission } from "@prisma/client";
-import { Input } from "@/app/_components/ui/input";
+
 import {
-  Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
 import {
@@ -43,13 +41,9 @@ import {
 } from "@/app/_constants/sellers";
 import { AlertDestructive } from "@/app/_components/alert-dialog";
 import { validateCPF } from "@/app/utils/validate-cpf";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/app/_components/ui/tooltip";
 import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
+import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
+import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
 
 interface UpsertSellerDrawerProps {
   seller?: {
@@ -66,7 +60,9 @@ interface UpsertSellerDrawerProps {
 const formSchema = z.object({
   name: z.string().min(3, { message: "Nome muito curto" }),
   document: z.string().length(11, { message: "CPF deve conter 11 caracteres" }),
-  sellerPassword: z.string().min(6, { message: "Senha muito curta" }),
+  sellerPassword: z
+    .string()
+    .length(6, { message: "Senha deve conter exatamente 6 caracteres" }),
   sellerStatus: z.nativeEnum(SellersStatus, {
     required_error: "Status é obrigatório",
   }),
@@ -89,8 +85,8 @@ export function DrawerUpsertSeller({
   });
   const [isViewPassword, setIsViewPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [validateCpf, setValidateCpf] = useState(false);
-  const [validatePassword, setValidatePassword] = useState(false);
+  const [validateCpf, setValidateCpf] = useState(true);
+  const [validatePassword, setValidatePassword] = useState(true);
   const [sellerRegisterIsLoading, setSellerRegisterIsLoading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const form = useForm<FormSchemaSellerUpsert>({
@@ -138,16 +134,10 @@ export function DrawerUpsertSeller({
 
   const onChangeVerifyPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (value.length < 6) {
+    if (value.length !== 6) {
       form.setError("sellerPassword", {
         type: "manual",
-        message: "Senha muito curta",
-      });
-      setValidatePassword(false);
-    } else if (value.length > 6) {
-      form.setError("sellerPassword", {
-        type: "manual",
-        message: "Senha muito longa",
+        message: "Senha deve conter exatamente 6 caracteres",
       });
       setValidatePassword(false);
     } else {
@@ -174,23 +164,15 @@ export function DrawerUpsertSeller({
         setValidateCpf(false);
       }
 
-      if (data.sellerPassword.length < 6) {
+      if (data.sellerPassword.length !== 6) {
         form.setError("sellerPassword", {
           type: "manual",
-          message: "Senha muito curta",
+          message: "Senha deve conter exatamente 6 caracteres",
         });
         setValidatePassword(false);
       }
 
-      if (data.sellerPassword.length > 6) {
-        form.setError("sellerPassword", {
-          type: "manual",
-          message: "Senha muito longa",
-        });
-        setValidatePassword(false);
-      }
-
-      if (!verifyDocument || data.sellerPassword.length < 6) {
+      if (!verifyDocument || data.sellerPassword.length !== 6) {
         return;
       }
       data = { ...data, sellerId: seller?.sellerId };
@@ -238,15 +220,20 @@ export function DrawerUpsertSeller({
                 </DrawerDescription>
               </DrawerHeader>
               {showAlert && <AlertDestructive />}
-              <div className="space-y-2 p-4 pb-0">
+              <div className="space-y-5 p-4 pb-0">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel className="text-sm font-bold">Nome</FormLabel>
+                    <FormItem>
                       <FormControl>
-                        <Input placeholder="Digite o nome..." {...field} />
+                        <InputLabelInBorder
+                          label="Nome"
+                          placeholder="Digite o nome..."
+                          {...field}
+                          error={!!form.formState.errors.name}
+                          errorMessage={form.formState.errors.name?.message}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -255,23 +242,10 @@ export function DrawerUpsertSeller({
                   control={form.control}
                   name="document"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel className="text-sm font-bold">CPF</FormLabel>
-                      {!validateCpf && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger disabled>
-                              {" "}
-                              <CircleAlertIcon className="text-destructive" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Insira um CPF válido!</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
+                    <FormItem>
                       <FormControl>
-                        <Input
+                        <InputLabelInBorder
+                          label="CPF"
                           placeholder="Digite o CPF..."
                           {...field}
                           value={formData.document}
@@ -280,6 +254,13 @@ export function DrawerUpsertSeller({
                             onChangeFormatDocument(e);
                           }}
                           accept="number"
+                          error={
+                            !validateCpf || !!form.formState.errors.document
+                          }
+                          errorMessage={
+                            form.formState.errors.document?.message ||
+                            "CPF inválido"
+                          }
                         />
                       </FormControl>
                     </FormItem>
@@ -289,24 +270,11 @@ export function DrawerUpsertSeller({
                   control={form.control}
                   name="sellerPassword"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel className="text-sm font-bold">Senha</FormLabel>
-                      {!validatePassword && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger disabled>
-                              {" "}
-                              <CircleAlertIcon className="text-destructive" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Insira uma senha de exatamente 6 dígitos!</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
+                    <FormItem>
                       <FormControl>
                         <div className="relative flex-1">
-                          <Input
+                          <InputLabelInBorder
+                            label="Senha"
                             type={isViewPassword ? "text" : "password"}
                             placeholder="Digite a senha..."
                             {...field}
@@ -314,6 +282,14 @@ export function DrawerUpsertSeller({
                               field.onChange(e);
                               onChangeVerifyPassword(e);
                             }}
+                            error={
+                              !validatePassword ||
+                              !!form.formState.errors.sellerPassword
+                            }
+                            errorMessage={
+                              form.formState.errors.sellerPassword?.message ||
+                              "Senha inválida"
+                            }
                           />
                           {isViewPassword ? (
                             <EyeOff
@@ -335,27 +311,30 @@ export function DrawerUpsertSeller({
                   control={form.control}
                   name="sellerPermission"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel className="text-sm font-bold">
-                        Permissão
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione um tipo de permissão" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {SELLERS_PERMISSIONS_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <FormItem>
+                      <FormControl>
+                        <SelectLabelInBorder
+                          label="Permissão"
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          error={!!form.formState.errors.sellerPermission}
+                          errorMessage={
+                            form.formState.errors.sellerPermission?.message
+                          }
+                        >
+                          <SelectValue placeholder="Selecione um tipo de permissão" />
+                          <SelectContent>
+                            {SELLERS_PERMISSIONS_OPTIONS.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </SelectLabelInBorder>
+                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -363,27 +342,30 @@ export function DrawerUpsertSeller({
                   control={form.control}
                   name="sellerStatus"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormLabel className="text-sm font-bold">
-                        Status
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o status do vendedor" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {SELLERS_STATUS_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <FormItem>
+                      <FormControl>
+                        <SelectLabelInBorder
+                          label="Status"
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          error={!!form.formState.errors.sellerStatus}
+                          errorMessage={
+                            form.formState.errors.sellerStatus?.message
+                          }
+                        >
+                          <SelectValue placeholder="Selecione o status do vendedor" />
+                          <SelectContent>
+                            {SELLERS_STATUS_OPTIONS.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </SelectLabelInBorder>
+                      </FormControl>
                     </FormItem>
                   )}
                 />

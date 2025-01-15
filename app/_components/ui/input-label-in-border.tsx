@@ -36,7 +36,7 @@ const InputLabelInBorder = React.forwardRef<
         {label}
       </Label>
       {error && errorMessage && (
-        <p className="mt-1 text-xs text-destructive">{errorMessage}</p>
+        <p className="mt-1 text-sm text-destructive">{errorMessage}</p>
       )}
     </div>
   );
