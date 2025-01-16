@@ -32,18 +32,10 @@ const DataTableSellers = ({ sellersTotal }: dataTableSellersProps) => {
     <>
       <div className="flex w-full items-center justify-between">
         <Input
-          placeholder="Filtrar nomes..."
+          placeholder="Filtrar vendedores..."
           onChange={(event) => onFilterSellers(event.target.value)}
-          className="w-[80%]"
+          className="w-[70%]"
         />
-        {/* <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        /> */}
         <CreateSellerButton />
       </div>
       <ScrollArea className="h-[570px] lg:h-[600px] 2xl:h-[820px]">
