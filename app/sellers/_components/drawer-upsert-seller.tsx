@@ -293,12 +293,20 @@ export function DrawerUpsertSeller({
                           />
                           {isViewPassword ? (
                             <EyeOff
-                              className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer"
+                              className={`absolute right-2 h-5 w-5 transform cursor-pointer ${
+                                !!form.formState.errors.sellerPassword
+                                  ? "top-1/3 -translate-y-1/2"
+                                  : "top-1/2 -translate-y-1/2"
+                              }`}
                               onClick={() => setIsViewPassword(false)}
                             />
                           ) : (
                             <Eye
-                              className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer"
+                              className={`absolute right-2 h-5 w-5 transform cursor-pointer ${
+                                !!form.formState.errors.sellerPassword
+                                  ? "top-1/3 -translate-y-1/2"
+                                  : "top-1/2 -translate-y-1/2"
+                              }`}
                               onClick={() => setIsViewPassword(true)}
                             />
                           )}
