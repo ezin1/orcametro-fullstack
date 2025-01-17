@@ -2,6 +2,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
+import { MyMemberships } from "../utils/clerk/dialog-select-organization";
 
 const HomePage = async () => {
   const { userId } = await auth();
@@ -17,7 +18,9 @@ const HomePage = async () => {
   }
 
   return (
-    <div className="flex h-full justify-center overflow-hidden">Home Page</div>
+    <div className="flex h-full justify-center overflow-hidden">
+      Home Page <MyMemberships isOpenDialog={true} />
+    </div>
   );
 };
 
