@@ -42,6 +42,7 @@ model Sellers {
   sellerId String @id @default(uuid())
   userId String 
   name String
+  email String
   sellerPassword String
   sellerStatus SellersStatus 
   sellerPermission SellerPermission

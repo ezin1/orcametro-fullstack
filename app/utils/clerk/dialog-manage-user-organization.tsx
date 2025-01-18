@@ -1,8 +1,12 @@
 "use client";
 
-import { useOrganizationList } from "@clerk/nextjs";
+import { useOrganization, useOrganizationList } from "@clerk/nextjs";
 
-import { UserMembershipParams } from "./organizations";
+import {
+  OrgInvitationsParams,
+  OrgMembersParams,
+  UserMembershipParams,
+} from "./organizations";
 import {
   Tabs,
   TabsContent,
@@ -16,8 +20,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/app/_components/ui/card";
-import { Label } from "@/app/_components/ui/label";
-import { Input } from "@/app/_components/ui/input";
 import { Button } from "@/app/_components/ui/button";
 import {
   AlertDialog,
@@ -27,16 +29,26 @@ import {
   AlertDialogFooter,
 } from "@/app/_components/ui/alert-dialog";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
-// import { useToast } from "@/app/_hooks/use-toast"
+
+import { useToast } from "@/app/_hooks/use-toast";
+
+import { CheckIcon } from "lucide-react";
 
 interface MyMembershipsProps {
   isOpenDialog: boolean;
+  orgId: string | undefined;
 }
 
-export const MyMemberships = ({ isOpenDialog }: MyMembershipsProps) => {
-  // const { toast } = useToast();
+export const MyMemberships = ({ isOpenDialog, orgId }: MyMembershipsProps) => {
+  const { toast } = useToast();
   const { setActive, userMemberships } =
     useOrganizationList(UserMembershipParams);
+
+  const { invitations, memberships } = useOrganization({
+    ...OrgInvitationsParams,
+    ...OrgMembersParams,
+  });
+
   // const userMembershipsDataExample = {
   //   data: [
   //     {
@@ -77,6 +89,37 @@ export const MyMemberships = ({ isOpenDialog }: MyMembershipsProps) => {
   //   ],
   // }
 
+  const handleSetActiveOrganization = async (organizationId: string) => {
+    try {
+      if (orgId === organizationId) {
+        toast({
+          title: "Erro",
+          description: "Você já está na organização selecionada.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (setActive) {
+        await setActive({ organization: organizationId });
+      } else {
+        throw new Error("setActive is not defined");
+      }
+
+      toast({
+        title: "Organização ativada",
+        description: "Você mudou para a organização selecionada com sucesso.",
+      });
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível mudar para a organização selecionada.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <AlertDialog open={isOpenDialog}>
@@ -95,14 +138,30 @@ export const MyMemberships = ({ isOpenDialog }: MyMembershipsProps) => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <div className="space-y-1">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" defaultValue="Pedro Duarte" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" defaultValue="@peduarte" />
-                  </div>
+                  <ScrollArea className="h-[150px] w-full rounded-md border">
+                    <div>
+                      {invitations?.data?.map((inv) => (
+                        <div
+                          key={inv.id}
+                          className="flex w-full justify-between"
+                        >
+                          <Button
+                            variant="outline"
+                            className="w-full border-none"
+                            onClick={async () => {
+                              await inv.revoke();
+                              await Promise.all([
+                                memberships?.revalidate,
+                                invitations?.revalidate,
+                              ]);
+                            }}
+                          >
+                            teste
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </CardContent>
                 <CardFooter>
                   <Button>Save changes</Button>
@@ -128,11 +187,11 @@ export const MyMemberships = ({ isOpenDialog }: MyMembershipsProps) => {
                             variant="outline"
                             className="w-full border-none"
                             onClick={() =>
-                              setActive &&
-                              setActive({ organization: mem.organization.id })
+                              handleSetActiveOrganization(mem.organization.id)
                             }
                           >
                             {mem.organization.name}
+                            {mem.organization.id === orgId && <CheckIcon />}
                           </Button>
                         </div>
                       ))}
@@ -143,8 +202,10 @@ export const MyMemberships = ({ isOpenDialog }: MyMembershipsProps) => {
             </TabsContent>
           </Tabs>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction>Continuar</AlertDialogAction>
+            <AlertDialogCancel>Fechar</AlertDialogCancel>
+            <AlertDialogAction className="text-white">
+              Continuar
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

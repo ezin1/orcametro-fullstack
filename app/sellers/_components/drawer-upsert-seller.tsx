@@ -44,12 +44,15 @@ import { validateCPF } from "@/app/utils/validate-cpf";
 import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
+import { OrgInvitationsParams } from "@/app/utils/clerk/organizations";
+import { useOrganization } from "@clerk/nextjs";
 
 interface UpsertSellerDrawerProps {
   seller?: {
     sellerId: string;
     name: string;
     document: string;
+    email: string;
     sellerPassword: string;
     sellerStatus: SellersStatus;
     sellerPermission: SellerPermission;
@@ -60,6 +63,7 @@ interface UpsertSellerDrawerProps {
 const formSchema = z.object({
   name: z.string().min(3, { message: "Nome muito curto" }),
   document: z.string().length(11, { message: "CPF deve conter 11 caracteres" }),
+  email: z.string().email({ message: "Email inválido" }),
   sellerPassword: z
     .string()
     .length(6, { message: "Senha deve conter exatamente 6 caracteres" }),
@@ -93,13 +97,14 @@ export function DrawerUpsertSeller({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller?.name || "",
+      email: seller?.email || "",
       document: seller?.document || "",
       sellerStatus: seller?.sellerStatus || "ACTIVE",
       sellerPassword: seller?.sellerPassword || "",
       sellerPermission: seller?.sellerPermission || "SELLER",
     },
   });
-
+  const { organization, invitations } = useOrganization(OrgInvitationsParams);
   const onChangeFormatDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let formattedValue = value;
@@ -176,7 +181,17 @@ export function DrawerUpsertSeller({
         return;
       }
       data = { ...data, sellerId: seller?.sellerId };
+
       await sellerUpsert(data);
+      console.log(organization);
+      if (organization) {
+        await organization.inviteMember({
+          emailAddress: data.email,
+          role: data.sellerPermission === "ADMIN" ? "admin" : "member",
+        });
+        await invitations?.revalidate?.();
+      }
+
       setIsDrawerOpen(false);
       form.reset();
     } catch (error) {
@@ -233,6 +248,22 @@ export function DrawerUpsertSeller({
                           {...field}
                           error={!!form.formState.errors.name}
                           errorMessage={form.formState.errors.name?.message}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-3 pt-3">
+                      <FormControl>
+                        <InputLabelInBorder
+                          label="Email"
+                          {...field}
+                          error={!!form.formState.errors.email}
+                          errorMessage={form.formState.errors.email?.message}
                         />
                       </FormControl>
                     </FormItem>
