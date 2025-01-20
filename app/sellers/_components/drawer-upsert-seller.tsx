@@ -44,8 +44,6 @@ import { validateCPF } from "@/app/utils/validate-cpf";
 import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
-import { OrgInvitationsParams } from "@/app/utils/clerk/organizations";
-import { useOrganization } from "@clerk/nextjs";
 
 interface UpsertSellerDrawerProps {
   seller?: {
@@ -104,7 +102,7 @@ export function DrawerUpsertSeller({
       sellerPermission: seller?.sellerPermission || "SELLER",
     },
   });
-  const { organization, invitations } = useOrganization(OrgInvitationsParams);
+
   const onChangeFormatDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let formattedValue = value;
@@ -183,14 +181,6 @@ export function DrawerUpsertSeller({
       data = { ...data, sellerId: seller?.sellerId };
 
       await sellerUpsert(data);
-      console.log(organization);
-      if (organization) {
-        await organization.inviteMember({
-          emailAddress: data.email,
-          role: data.sellerPermission === "ADMIN" ? "admin" : "member",
-        });
-        await invitations?.revalidate?.();
-      }
 
       setIsDrawerOpen(false);
       form.reset();
