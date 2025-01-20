@@ -17,9 +17,14 @@ const HomePage = async () => {
     redirect("/register");
   }
 
+  let isOpenDialog = true;
+  if (orgId) {
+    isOpenDialog = false;
+  }
+
   return (
     <div className="flex h-full justify-center overflow-hidden">
-      Home Page <MyMemberships isOpenDialog={true} orgId={orgId} />
+      Home Page <MyMemberships isOpenDialog={isOpenDialog} orgId={orgId} />
     </div>
   );
 };

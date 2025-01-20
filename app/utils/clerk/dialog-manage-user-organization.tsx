@@ -18,10 +18,7 @@ import {
 import { Button } from "@/app/_components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogFooter,
 } from "@/app/_components/ui/alert-dialog";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 
@@ -121,12 +118,6 @@ export const MyMemberships = ({ isOpenDialog, orgId }: MyMembershipsProps) => {
               </Card>
             </TabsContent>
           </Tabs>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Fechar</AlertDialogCancel>
-            <AlertDialogAction className="text-white">
-              Continuar
-            </AlertDialogAction>
-          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
