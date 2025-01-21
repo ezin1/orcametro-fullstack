@@ -22,6 +22,7 @@ import {
 } from "@/app/_components/ui/alert-dialog";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { updateUserPlan } from "@/app/_data/users/users-plan";
 
 export interface AcquirePlanButtonProps {
   userPlan: string;
@@ -44,6 +45,8 @@ const AcquirePlanButton = ({
     if (!result) {
       throw new Error("Failed to cancel subscription");
     }
+
+    await updateUserPlan({ plan: "No Plan", userIdSeller: userId });
 
     setTimeout(() => {
       setCancelIsLoading(false);
@@ -84,7 +87,7 @@ const AcquirePlanButton = ({
     if (!stripe) {
       throw new Error("Stripe not found");
     }
-
+    await updateUserPlan({ plan: planName, userIdSeller: userId });
     await updateUserPlanClerk(userId, planName);
     await stripe.redirectToCheckout({ sessionId });
 
