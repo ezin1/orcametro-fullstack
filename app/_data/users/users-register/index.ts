@@ -5,7 +5,12 @@ import { db } from "@/app/_lib/prisma";
 import { FormSchemaUserRegister } from "@/app/register/_components/form-register";
 import { redirect } from "next/navigation";
 
-export const usersRegister = async (data: FormSchemaUserRegister) => {
+interface UserRegisterProps {
+  data: FormSchemaUserRegister;
+  userPlan: string;
+}
+
+export const usersRegister = async ({ data, userPlan }: UserRegisterProps) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -29,7 +34,7 @@ export const usersRegister = async (data: FormSchemaUserRegister) => {
       neighborhood: data.neighborhood,
       city: data.city,
       state: data.state,
-      userPlan: "No Plan",
+      userPlan: userPlan || "No Plan",
       reportsInMonth: 0,
       reportsInMonthUsed: 0,
     },

@@ -28,7 +28,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SellersStatus, SellerPermission } from "@prisma/client";
+import { SellersStatus, SellerPermission, Users } from "@prisma/client";
 
 import {
   SelectContent,
@@ -44,8 +44,11 @@ import { validateCPF } from "@/app/utils/validate-cpf";
 import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
+import { verifyIfUserExistsByEmail } from "@/app/_data/users/users-info";
+import { updateUserPlan } from "@/app/_data/users/users-plan";
 
 interface UpsertSellerDrawerProps {
+  userInfo: Users;
   seller?: {
     sellerId: string;
     name: string;
@@ -78,6 +81,7 @@ export type FormSchemaSellerUpsert = z.infer<typeof formSchema> & {
 };
 
 export function DrawerUpsertSeller({
+  userInfo,
   seller,
   isUpdate,
 }: UpsertSellerDrawerProps) {
@@ -179,6 +183,17 @@ export function DrawerUpsertSeller({
         return;
       }
       data = { ...data, sellerId: seller?.sellerId };
+
+      if (!isUpdate) {
+        const verifyUserEmail = await verifyIfUserExistsByEmail(data.email);
+
+        if (verifyUserEmail.user) {
+          await updateUserPlan({
+            plan: userInfo.userPlan,
+            userIdSeller: verifyUserEmail.user.userId,
+          });
+        }
+      }
 
       await sellerUpsert(data);
 

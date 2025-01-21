@@ -17,3 +17,13 @@ export const usersInfo = async () => {
 
   return { verifyIfUserIsRegistered };
 };
+
+export const verifyIfUserExistsByEmail = async (email: string) => {
+  const user = await db.users.findFirst({
+    where: {
+      email,
+    },
+  });
+
+  return { user };
+};

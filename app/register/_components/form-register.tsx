@@ -19,7 +19,7 @@ import { validateCNPJ } from "@/app/utils/validate-cnpj";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { Loader2Icon } from "lucide-react";
 
-import { usersRegister } from "@/app/_data/users/users-register";
+// import { usersRegister } from "@/app/_data/users/users-register";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { useToast } from "@/app/_hooks/use-toast";
 
@@ -287,7 +287,7 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         setValidateCep(false);
       }
 
-      await usersRegister(data);
+      // await usersRegister(data);
     } catch (error) {
       console.error(error);
     } finally {
