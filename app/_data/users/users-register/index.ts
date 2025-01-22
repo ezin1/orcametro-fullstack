@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 interface UserRegisterProps {
   data: FormSchemaUserRegister;
-  userPlan: string;
+  userPlan: string | null;
 }
 
 export const usersRegister = async ({ data, userPlan }: UserRegisterProps) => {

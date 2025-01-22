@@ -27,3 +27,13 @@ export const verifyIfUserExistsByEmail = async (email: string) => {
 
   return { user };
 };
+
+export const getPlanByUserId = async (userIdSellerCreator: string) => {
+  const userInfo = await db.users.findUnique({
+    where: {
+      userId: userIdSellerCreator,
+    },
+  });
+
+  return { userInfo };
+};

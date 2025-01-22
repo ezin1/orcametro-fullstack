@@ -19,9 +19,11 @@ import { validateCNPJ } from "@/app/utils/validate-cnpj";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { Loader2Icon } from "lucide-react";
 
-// import { usersRegister } from "@/app/_data/users/users-register";
+import { usersRegister } from "@/app/_data/users/users-register";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { useToast } from "@/app/_hooks/use-toast";
+import { sellerInfoByEmail } from "@/app/_data/sellers/sellers-info";
+import { getPlanByUserId } from "@/app/_data/users/users-info";
 
 const commonFields = {
   responsibleName: z.string().min(2, {
@@ -287,7 +289,20 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         setValidateCep(false);
       }
 
-      // await usersRegister(data);
+      const sellerInfo = await sellerInfoByEmail(data.email);
+
+      if (sellerInfo.verifyIfUserIsSeller) {
+        const sellerCreatorUserPlan = await getPlanByUserId(
+          sellerInfo.verifyIfUserIsSeller.userId,
+        );
+
+        await usersRegister({
+          data,
+          userPlan: sellerCreatorUserPlan.userInfo?.userPlan || null,
+        });
+      } else {
+        await usersRegister({ data, userPlan: null });
+      }
     } catch (error) {
       console.error(error);
     } finally {
