@@ -1,6 +1,5 @@
 import {
   CircleDollarSignIcon,
-  ClipboardList,
   FileSpreadsheet,
   Home,
   Package,
@@ -40,11 +39,6 @@ const items = [
     title: "Serviços",
     url: "/services",
     icon: Wrench,
-  },
-  {
-    title: "Categorias",
-    url: "/categories",
-    icon: ClipboardList,
   },
   {
     title: "Vendedores",

@@ -58,7 +58,6 @@ model Products {
   code String
   name String
   value Decimal @db.Decimal(10, 2)
-  categoryId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
@@ -70,22 +69,11 @@ model Services {
   code String
   name String
   value Decimal @db.Decimal(10, 2)
-  categoryId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
 }
 
-model Categories {
-  id String @id @default(uuid())
-  userId String
-  categoryType CategoryType
-  code String
-  name String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deleted Boolean @default(false)
-}
 
 model Budgets {
   id String @id @default(uuid())
@@ -116,7 +104,3 @@ enum SellerPermission {
   SELLER
 }
 
-enum CategoryType {
-  PRODUCT
-  SERVICE
-}
