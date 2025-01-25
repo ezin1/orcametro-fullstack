@@ -214,6 +214,19 @@ export function DrawerUpsertSeller({
     }
   }, [form.formState.errors]);
 
+  useEffect(() => {
+    if (seller) {
+      form.reset({
+        name: seller.name,
+        email: seller.email,
+        document: seller.document,
+        sellerStatus: seller.sellerStatus,
+        sellerPassword: seller.sellerPassword,
+        sellerPermission: seller.sellerPermission,
+      });
+    }
+  }, [seller, form]);
+
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger asChild>
