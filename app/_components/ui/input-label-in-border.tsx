@@ -3,7 +3,7 @@ import { Label } from "./label";
 import { Input } from "./input";
 import { cn } from "@/app/_lib/utils";
 
-interface InputLabelInBorderProps
+export interface InputLabelInBorderProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: boolean;

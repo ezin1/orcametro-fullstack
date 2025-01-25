@@ -8,7 +8,7 @@ export const createStripeCheckout = async ({
   planName,
 }: AcquirePlanButtonProps) => {
   const { userId } = await auth();
-  console.log(planName);
+
   if (!userId) {
     throw new Error("Unauthorized");
   }

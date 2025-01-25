@@ -1,14 +1,8 @@
-// "use client";
+"use client";
+import { DrawerUpsertServices } from "./drawer-upsert-service";
 
-// import { Services} from "@prisma/client";
-// import { DrawerUpsertServices } from "./drawer-upsert-service";
+const CreateServiceButton = () => {
+  return <DrawerUpsertServices isUpdate={false} />;
+};
 
-// interface CreateServiceButtonProps {
-//   service: Services;
-// }
-
-// const CreateServiceButton = ({ service }: CreateServiceButtonProps) => {
-//   return <DrawerUpsertServices isUpdate={false} service={service} />;
-// };
-
-// export default CreateServiceButton;
+export default CreateServiceButton;
