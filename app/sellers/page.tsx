@@ -35,10 +35,7 @@ const SellersPage = async () => {
             Vendedores
           </h1>
         </div>
-        <DataTableSellers
-          sellersTotal={sellers}
-          userInfo={userInfo.verifyIfUserIsRegistered}
-        />
+        <DataTableSellers sellersTotal={sellers} />
       </div>
     </>
   );

@@ -28,7 +28,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SellersStatus, SellerPermission, Users } from "@prisma/client";
+import { SellersStatus, SellerPermission } from "@prisma/client";
 
 import {
   SelectContent,
@@ -44,11 +44,13 @@ import { validateCPF } from "@/app/utils/validate-cpf";
 import { sellerUpsert } from "@/app/_data/sellers/seller-upsert";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
-import { verifyIfUserExistsByEmail } from "@/app/_data/users/users-info";
+import {
+  usersInfo,
+  verifyIfUserExistsByEmail,
+} from "@/app/_data/users/users-info";
 import { updateUserPlan } from "@/app/_data/users/users-plan";
 
 interface UpsertSellerDrawerProps {
-  userInfo: Users;
   seller?: {
     sellerId: string;
     name: string;
@@ -81,7 +83,6 @@ export type FormSchemaSellerUpsert = z.infer<typeof formSchema> & {
 };
 
 export function DrawerUpsertSeller({
-  userInfo,
   seller,
   isUpdate,
 }: UpsertSellerDrawerProps) {
@@ -159,6 +160,8 @@ export function DrawerUpsertSeller({
 
   const onSubmit = async (data: FormSchemaSellerUpsert) => {
     try {
+      const userInfo = await usersInfo();
+      console.log(userInfo, " aquiburro");
       setSellerRegisterIsLoading(true);
 
       const verifyDocument = validateCPF(data.document);
@@ -189,7 +192,7 @@ export function DrawerUpsertSeller({
 
         if (verifyUserEmail.user) {
           await updateUserPlan({
-            plan: userInfo.userPlan,
+            plan: userInfo.verifyIfUserIsRegistered?.userPlan || "No Plan",
             userIdSeller: verifyUserEmail.user.userId,
           });
         }
