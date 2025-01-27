@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
+import { db } from "../_lib/prisma";
+import DataTableProducts from "./_components/data-table-products";
 
 const ProductsPage = async () => {
   const { userId } = await auth();
@@ -15,10 +17,28 @@ const ProductsPage = async () => {
     redirect("/register");
   }
 
+  const products = await db.products.findMany({
+    where: {
+      userId: userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   return (
-    <div>
-      <p>Products Page</p>
-    </div>
+    <>
+      <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
+        <div className="flex w-full items-center justify-between">
+          <h1 className="text-base font-bold sm:text-sm md:text-lg lg:text-2xl">
+            Produtos
+          </h1>
+        </div>
+        <DataTableProducts
+          productsTotal={JSON.parse(JSON.stringify(products))}
+        />
+      </div>
+    </>
   );
 };
 
