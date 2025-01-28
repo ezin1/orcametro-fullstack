@@ -1,9 +1,9 @@
+import { Separator } from "@/app/_components/ui/separator";
+import { usersInfo } from "@/app/_data/users/users-info";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { usersInfo } from "../_data/users/users-info";
-import { Separator } from "../_components/ui/separator";
 
-const BudgetsPage = async () => {
+const MyBudgetsPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -18,10 +18,10 @@ const BudgetsPage = async () => {
 
   return (
     <div>
-      <p>Budgets Page</p>
+      <p>MyBudgets Page</p>
       <Separator className="" orientation="vertical" />
     </div>
   );
 };
 
-export default BudgetsPage;
+export default MyBudgetsPage;
