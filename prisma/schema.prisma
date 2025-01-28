@@ -80,6 +80,7 @@ model Budgets {
   userId String
   description String
   value Decimal @db.Decimal(10, 2)
+  budgetStatus BudgetStatus
   expirationDate DateTime
   clientName String
   clientDocument String
@@ -89,7 +90,7 @@ model Budgets {
   budgetPdf String
   budgetObservation String
   validationQRCode String
-  budgetType String
+  budgetType BudgetType
   createdAt DateTime @default(now())
   deleted Boolean @default(false)
 }
@@ -102,5 +103,17 @@ enum SellersStatus {
 enum SellerPermission {
   ADMIN
   SELLER
+}
+
+enum BudgetStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BudgetType {
+  SERVICE
+  PRODUCT
+  HYBRID
 }
 
