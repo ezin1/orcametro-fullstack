@@ -33,6 +33,7 @@ model Users {
   userPlan String
   reportsInMonth Int
   reportsInMonthUsed Int
+  organizationId String?
   deleted Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,6 +48,7 @@ model Sellers {
   sellerStatus SellersStatus 
   sellerPermission SellerPermission
   document String
+  organizationId String
   deleted Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,6 +60,7 @@ model Products {
   code String
   name String
   value Decimal @db.Decimal(10, 2)
+  organizationId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
@@ -69,6 +72,7 @@ model Services {
   code String
   name String
   value Decimal @db.Decimal(10, 2)
+  organizationId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
@@ -91,6 +95,7 @@ model Budgets {
   budgetObservation String
   validationQRCode String
   budgetType BudgetType
+  organizationId String
   createdAt DateTime @default(now())
   deleted Boolean @default(false)
 }
