@@ -88,9 +88,13 @@ export type FormSchemaUserRegister = z.infer<typeof formSchema>;
 
 interface FormRegisterProps {
   userEmail: string;
+  organizationId: string | null;
 }
 
-export const FormRegister = ({ userEmail }: FormRegisterProps) => {
+export const FormRegister = ({
+  userEmail,
+  organizationId,
+}: FormRegisterProps) => {
   const [formData, setFormData] = useState({
     cellphone: "",
     phone: "",
@@ -299,9 +303,14 @@ export const FormRegister = ({ userEmail }: FormRegisterProps) => {
         await usersRegister({
           data,
           userPlan: sellerCreatorUserPlan.userInfo?.userPlan || null,
+          organizationId: organizationId || "",
         });
       } else {
-        await usersRegister({ data, userPlan: null });
+        await usersRegister({
+          data,
+          userPlan: null,
+          organizationId: organizationId || "",
+        });
       }
     } catch (error) {
       console.error(error);

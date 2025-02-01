@@ -8,9 +8,14 @@ import { redirect } from "next/navigation";
 interface UserRegisterProps {
   data: FormSchemaUserRegister;
   userPlan: string | null;
+  organizationId: string | null;
 }
 
-export const usersRegister = async ({ data, userPlan }: UserRegisterProps) => {
+export const usersRegister = async ({
+  data,
+  userPlan,
+  organizationId,
+}: UserRegisterProps) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -34,6 +39,7 @@ export const usersRegister = async ({ data, userPlan }: UserRegisterProps) => {
       neighborhood: data.neighborhood,
       city: data.city,
       state: data.state,
+      organizationId: organizationId || "",
       userPlan: userPlan || "No Plan",
       reportsInMonth: 0,
       reportsInMonthUsed: 0,

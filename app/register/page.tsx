@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
 
 const RegisterPage = async () => {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
 
   if (!userId) {
     redirect("/login");
@@ -36,7 +36,10 @@ const RegisterPage = async () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 text-center">
-          <FormRegister userEmail={userEmail || ""} />
+          <FormRegister
+            userEmail={userEmail || ""}
+            organizationId={orgId || ""}
+          />
         </CardContent>
       </Card>
     </div>

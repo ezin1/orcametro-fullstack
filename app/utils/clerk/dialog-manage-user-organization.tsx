@@ -25,6 +25,7 @@ import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { useToast } from "@/app/_hooks/use-toast";
 
 import { CheckIcon } from "lucide-react";
+import { usersUpdateOrganization } from "@/app/_data/users/users-update";
 
 interface MyMembershipsProps {
   isOpenDialog: boolean;
@@ -49,6 +50,7 @@ export const MyMemberships = ({ isOpenDialog, orgId }: MyMembershipsProps) => {
 
       if (setActive) {
         await setActive({ organization: organizationId });
+        await usersUpdateOrganization(organizationId);
       } else {
         throw new Error("setActive is not defined");
       }
