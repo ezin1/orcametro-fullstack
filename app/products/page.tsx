@@ -5,9 +5,9 @@ import { db } from "../_lib/prisma";
 import DataTableProducts from "./_components/data-table-products";
 
 const ProductsPage = async () => {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
 
-  if (!userId) {
+  if (!userId || !orgId) {
     redirect("/login");
   }
 
@@ -19,7 +19,7 @@ const ProductsPage = async () => {
 
   const products = await db.products.findMany({
     where: {
-      userId: userId,
+      organizationId: orgId,
     },
     orderBy: {
       createdAt: "desc",

@@ -5,14 +5,19 @@ import { revalidatePath } from "next/cache";
 import { FormSchemaProductsUpsert } from "@/app/products/_components/drawer-upsert-product";
 
 export const productUpsert = async (data: FormSchemaProductsUpsert) => {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   await db.products.upsert({
     update: { ...data, userId, id: data.id ?? undefined },
-    create: { ...data, userId, id: data.id ?? undefined },
+    create: {
+      ...data,
+      userId,
+      id: data.id ?? undefined,
+      organizationId: orgId || "",
+    },
     where: {
       id: data.id || "",
     },

@@ -6,14 +6,19 @@ import { revalidatePath } from "next/cache";
 import { FormSchemaServicesUpsert } from "@/app/services/_components/drawer-upsert-service";
 
 export const serviceUpsert = async (data: FormSchemaServicesUpsert) => {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   await db.services.upsert({
     update: { ...data, userId, id: data.id ?? undefined },
-    create: { ...data, userId, id: data.id ?? undefined },
+    create: {
+      ...data,
+      userId,
+      id: data.id ?? undefined,
+      organizationId: orgId || "",
+    },
     where: {
       id: data.id || "",
     },

@@ -5,9 +5,9 @@ import { db } from "../_lib/prisma";
 import DataTableServices from "./_components/data-table-services";
 
 const CategoriesPage = async () => {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
 
-  if (!userId) {
+  if (!userId || !orgId) {
     redirect("/login");
   }
 
@@ -19,7 +19,7 @@ const CategoriesPage = async () => {
 
   const services = await db.services.findMany({
     where: {
-      userId: userId,
+      organizationId: orgId,
     },
     orderBy: {
       createdAt: "desc",
