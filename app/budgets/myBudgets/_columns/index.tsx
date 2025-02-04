@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import DeleteBudgetButton from "../_components/delete-budget-button";
 import BadgeBudgetType from "@/app/budgets/myBudgets/_components/badge-budget-type";
 import BadgeBudgetStatus from "../_components/badge-budget-status";
+import { DrawerViewBudgetInfo } from "../_components/drawer-view-budget-info";
 
 export const budgetsColumns: ColumnDef<Budgets>[] = [
   {
@@ -55,10 +56,9 @@ export const budgetsColumns: ColumnDef<Budgets>[] = [
     cell: ({ row: { original: budget } }) => {
       return (
         <div className="flex flex-row space-x-1">
-          {/* <DrawerUpsertProducts
-            product={{ ...budget, value: Number(budget.value) }}
-            isUpdate={true}
-          /> */}
+          <DrawerViewBudgetInfo
+            budget={{ ...budget, value: Number(budget.value) }}
+          />
           <DeleteBudgetButton id={budget.id} />
         </div>
       );
