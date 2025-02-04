@@ -17,3 +17,18 @@ export const sellerInfoByEmail = async (email: string) => {
 
   return { verifyIfUserIsSeller };
 };
+
+export const sellerInfoById = async (id: string) => {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const verifyIfUserIsSeller = await db.sellers.findFirst({
+    where: {
+      sellerId: id,
+    },
+  });
+
+  return { verifyIfUserIsSeller };
+};

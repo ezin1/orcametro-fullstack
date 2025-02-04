@@ -3,6 +3,7 @@ import { db } from "@/app/_lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import DataTableBudgets from "./_components/data-table-budgets";
+import { sellerInfoById } from "@/app/_data/sellers/sellers-info";
 
 const MyBudgetsPage = async () => {
   const { userId, orgId } = await auth();
@@ -26,6 +27,16 @@ const MyBudgetsPage = async () => {
     },
   });
 
+  const budgetsWithSellerName = await Promise.all(
+    budgets.map(async (budget) => {
+      const seller = await sellerInfoById(budget.sellerId);
+      return {
+        ...budget,
+        sellerName: seller.verifyIfUserIsSeller?.name,
+      };
+    }),
+  );
+
   return (
     <>
       <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
@@ -34,7 +45,9 @@ const MyBudgetsPage = async () => {
             Meus Orçamentos
           </h1>
         </div>
-        <DataTableBudgets budgetsTotal={JSON.parse(JSON.stringify(budgets))} />
+        <DataTableBudgets
+          budgetsTotal={JSON.parse(JSON.stringify(budgetsWithSellerName))}
+        />
       </div>
     </>
   );
