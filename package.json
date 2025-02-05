@@ -45,6 +45,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.2",
     "react-number-format": "^5.4.3",
+    "react-qr-reader": "^3.0.0-beta-1",
     "stripe": "^17.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

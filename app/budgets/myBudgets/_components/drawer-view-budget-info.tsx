@@ -1,8 +1,10 @@
 import { Button } from "@/app/_components/ui/button";
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -15,6 +17,8 @@ import { useState } from "react";
 import BadgeBudgetStatus from "./badge-budget-status";
 import BadgeBudgetType from "./badge-budget-type";
 import { BudgetStatus, BudgetType } from "@prisma/client";
+import ButtonViewBudgetPDF from "./button-view-budget-pdf";
+import ButtonDialogValidatePDF from "./button-dialog-validate-budget";
 
 interface DrawerViewBudgetInfoProps {
   budget: {
@@ -33,6 +37,7 @@ interface DrawerViewBudgetInfoProps {
     budgetType: BudgetType;
     sellerName: string;
     updatedAt: Date;
+    budgetPdf: string;
   };
 }
 
@@ -118,6 +123,21 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
               </div>
             </LabeledCard>
           </div>
+          <DrawerFooter className="flex flex-row justify-between">
+            <DrawerClose asChild>
+              <Button
+                onClick={() => setIsDrawerOpen(false)}
+                variant="secondary"
+              >
+                Fechar
+              </Button>
+            </DrawerClose>
+
+            <div className="flex flex-row space-x-2">
+              <ButtonDialogValidatePDF />
+              <ButtonViewBudgetPDF pdfBase64={budget.budgetPdf} />
+            </div>
+          </DrawerFooter>
         </div>
       </DrawerContent>
     </Drawer>
