@@ -1,5 +1,6 @@
 import type React from "react";
 import { Card } from "./card";
+import { ScrollArea } from "./scroll-area";
 
 interface LabeledInfoProps {
   label: string;
@@ -16,6 +17,8 @@ export const LabeledInfo: React.FC<LabeledInfoProps> = ({
   contentColor = "text-foreground",
   className = "",
 }) => {
+  const isObservacoes = label === "Observações";
+
   return (
     <Card
       className={`relative px-2 pb-2 pt-3 sm:px-4 sm:pb-3 sm:pt-4 ${className} w-full sm:w-auto`}
@@ -25,11 +28,25 @@ export const LabeledInfo: React.FC<LabeledInfoProps> = ({
           {label}
         </span>
       </div>
-      <p
-        className={`sm:text-md text-sm ${contentColor} select-text break-words`}
-      >
-        {content}
-      </p>
+
+      {isObservacoes ? (
+        <ScrollArea className="h-[120px] w-full">
+          <div className="pr-4">
+            <p
+              className={`sm:text-md text-sm ${contentColor} select-text break-all`}
+              style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
+            >
+              {content}
+            </p>
+          </div>
+        </ScrollArea>
+      ) : (
+        <p
+          className={`sm:text-md text-sm ${contentColor} select-text break-words`}
+        >
+          {content}
+        </p>
+      )}
     </Card>
   );
 };

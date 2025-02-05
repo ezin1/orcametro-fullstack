@@ -113,7 +113,7 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
                 </div>
                 <LabeledInfo
                   label="Observações"
-                  content={budget.budgetObservation}
+                  content={budget.budgetObservation || "Sem observações"}
                 />
               </div>
             </LabeledCard>
