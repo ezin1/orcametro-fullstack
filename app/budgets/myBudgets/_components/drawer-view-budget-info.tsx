@@ -59,13 +59,13 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
             <DrawerDescription className="flex justify-between">
               <div>{budget.description}</div>
               <div className="space-x-2">
-                <BadgeBudgetType budgetType={budget.budgetType} />
                 <BadgeBudgetStatus
                   budgetStatus={budget.budgetStatus}
                   createdAt={budget.createdAt}
                   updatedAt={budget.updatedAt}
                   expirationDate={budget.expirationDate}
                 />
+                <BadgeBudgetType budgetType={budget.budgetType} />
               </div>
             </DrawerDescription>
           </DrawerHeader>

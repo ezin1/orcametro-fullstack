@@ -161,7 +161,7 @@ export function DrawerUpsertSeller({
   const onSubmit = async (data: FormSchemaSellerUpsert) => {
     try {
       const userInfo = await usersInfo();
-      console.log(userInfo, " aquiburro");
+
       setSellerRegisterIsLoading(true);
 
       const verifyDocument = validateCPF(data.document);

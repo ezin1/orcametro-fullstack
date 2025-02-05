@@ -7,14 +7,19 @@ import BadgeBudgetType from "@/app/budgets/myBudgets/_components/badge-budget-ty
 import BadgeBudgetStatus from "../_components/badge-budget-status";
 import { DrawerViewBudgetInfo } from "../_components/drawer-view-budget-info";
 
-export const budgetsColumns: ColumnDef<Budgets>[] = [
+export const budgetsColumns: ColumnDef<Budgets & { sellerName: string }>[] = [
   {
     accessorKey: "budgetStatus",
     header: "Status",
     cell: ({ row: { original: budget } }) => {
       return (
         <div>
-          <BadgeBudgetStatus budgetStatus={budget.budgetStatus} />
+          <BadgeBudgetStatus
+            budgetStatus={budget.budgetStatus}
+            createdAt={budget.createdAt}
+            expirationDate={budget.expirationDate}
+            updatedAt={budget.updatedAt}
+          />
         </div>
       );
     },
@@ -57,7 +62,11 @@ export const budgetsColumns: ColumnDef<Budgets>[] = [
       return (
         <div className="flex flex-row space-x-1">
           <DrawerViewBudgetInfo
-            budget={{ ...budget, value: Number(budget.value) }}
+            budget={{
+              ...budget,
+              value: Number(budget.value),
+              sellerName: budget.sellerName,
+            }}
           />
           <DeleteBudgetButton id={budget.id} />
         </div>
