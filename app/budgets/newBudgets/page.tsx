@@ -1,7 +1,7 @@
 import { usersInfo } from "@/app/_data/users/users-info";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-// import GenerateBudgetComponent from "./_components/generate-budget-component";
+import GenerateBudgetComponent from "./_components/generate-budget-component";
 
 const NewBudgetsPage = async () => {
   const { userId } = await auth();
@@ -25,7 +25,7 @@ const NewBudgetsPage = async () => {
           </h1>
         </div>
 
-        {/* <GenerateBudgetComponent /> */}
+        <GenerateBudgetComponent />
       </div>
     </>
   );
