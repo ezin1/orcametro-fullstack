@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/app/_components/ui/alert-dialog";
 import { Button } from "@/app/_components/ui/button";
-import { productDelete } from "@/app/_data/products/product-delete";
+import { budgetDeleteById } from "@/app/_data/budgets/budget-delete";
 
 import { TrashIcon } from "lucide-react";
 
@@ -21,7 +21,7 @@ interface DeleteBudgetButtonProps {
 const DeleteBudgetButton = ({ id }: DeleteBudgetButtonProps) => {
   const handleConfirmDeleteClick = async () => {
     try {
-      await productDelete({ id });
+      await budgetDeleteById(id);
     } catch (error) {
       console.error(error);
     }

@@ -4,6 +4,7 @@ import { db } from "@/app/_lib/prisma";
 
 import { redirect } from "next/navigation";
 import { BudgetStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 interface BudgetUpdateStatusProps {
   budgetId: string;
@@ -26,6 +27,6 @@ export const updateStatusBudgetById = async ({
       budgetStatus: budgetStatus,
     },
   });
-
+  revalidatePath("/budgets/myBudgets");
   redirect("/budgets/myBudgets");
 };
