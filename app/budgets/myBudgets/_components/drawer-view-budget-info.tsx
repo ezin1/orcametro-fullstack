@@ -134,7 +134,11 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
             </DrawerClose>
 
             <div className="flex flex-row space-x-2">
-              <ButtonDialogValidatePDF />
+              <ButtonDialogValidatePDF
+                id={budget.id}
+                sellerId={budget.sellerId}
+                budgetStatus={budget.budgetStatus}
+              />
               <ButtonViewBudgetPDF pdfBase64={budget.budgetPdf} />
             </div>
           </DrawerFooter>

@@ -45,7 +45,10 @@ const DeleteBudgetButton = ({ id }: DeleteBudgetButtonProps) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmDeleteClick}>
+          <AlertDialogAction
+            className="text-white"
+            onClick={handleConfirmDeleteClick}
+          >
             Continuar
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -32,3 +32,22 @@ export const sellerInfoById = async (id: string) => {
 
   return { verifyIfUserIsSeller };
 };
+
+export const verifyPasswordBySellerId = async (
+  id: string,
+  password: string,
+) => {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const verifyPassword = await db.sellers.findFirst({
+    where: {
+      sellerId: id,
+      sellerPassword: password,
+    },
+  });
+
+  return { verifyPassword };
+};
