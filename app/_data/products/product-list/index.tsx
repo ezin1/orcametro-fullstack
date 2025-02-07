@@ -21,3 +21,19 @@ export const listAllProducts = async () => {
 
   return products;
 };
+
+export const listProductById = async (id: string) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const product = await db.products.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return product;
+};

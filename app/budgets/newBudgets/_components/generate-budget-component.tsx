@@ -10,7 +10,16 @@ import {
 } from "@/app/_components/ui/form";
 
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
-import { Separator } from "@/app/_components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_components/ui/table";
 import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,6 +58,8 @@ const GenerateBudgetComponent = ({
     clientPhone: "",
   });
   const [validateCpf, setValidateCpf] = useState(true);
+  const [productsSelected, setProductsSelected] = useState<string[]>([]);
+  const [servicesSelected, setServicesSelected] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -117,13 +128,67 @@ const GenerateBudgetComponent = ({
     value: Number(service.value),
   }));
 
+  const onChangeProducts = (selectedProducts: string[]) => {
+    setProductsSelected(selectedProducts);
+  };
+
+  const onChangeServices = (selectedServices: string[]) => {
+    setServicesSelected(selectedServices);
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    console.log(productsSelected);
+    console.log(servicesSelected);
   }
+  const invoices = [
+    {
+      invoice: "INV001",
+      paymentStatus: "Paid",
+      totalAmount: "$250.00",
+      paymentMethod: "Credit Card",
+    },
+    {
+      invoice: "INV002",
+      paymentStatus: "Pending",
+      totalAmount: "$150.00",
+      paymentMethod: "PayPal",
+    },
+    {
+      invoice: "INV003",
+      paymentStatus: "Unpaid",
+      totalAmount: "$350.00",
+      paymentMethod: "Bank Transfer",
+    },
+    {
+      invoice: "INV004",
+      paymentStatus: "Paid",
+      totalAmount: "$450.00",
+      paymentMethod: "Credit Card",
+    },
+    {
+      invoice: "INV005",
+      paymentStatus: "Paid",
+      totalAmount: "$550.00",
+      paymentMethod: "PayPal",
+    },
+    {
+      invoice: "INV006",
+      paymentStatus: "Pending",
+      totalAmount: "$200.00",
+      paymentMethod: "Bank Transfer",
+    },
+    {
+      invoice: "INV007",
+      paymentStatus: "Unpaid",
+      totalAmount: "$300.00",
+      paymentMethod: "Credit Card",
+    },
+  ];
 
   return (
     <div>
-      <div className="grid w-full grid-cols-3 justify-between space-x-6">
+      <div className="grid w-full grid-cols-2 justify-between space-x-6">
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -232,6 +297,7 @@ const GenerateBudgetComponent = ({
                         onValueChange={(selectedProducts) => {
                           field.onChange(selectedProducts);
                           form.clearErrors("products");
+                          onChangeProducts(selectedProducts);
                         }}
                         placeholder="Selecione os produtos desejados"
                         label="Produtos"
@@ -255,6 +321,7 @@ const GenerateBudgetComponent = ({
                         onValueChange={(selectedServices) => {
                           field.onChange(selectedServices);
                           form.clearErrors("services");
+                          onChangeServices(selectedServices);
                         }}
                         placeholder="Selecione os serviços desejados"
                         label="Serviços"
@@ -285,12 +352,38 @@ const GenerateBudgetComponent = ({
             </form>
           </Form>
         </div>
-        <Separator
-          className="flex items-center justify-center"
-          orientation="vertical"
-        />
         <div>
-          <h3>TESTE</h3> <h3>TESTE</h3> <h3>TESTE</h3>
+          <Table>
+            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Invoice</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Method</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((invoice) => (
+                <TableRow key={invoice.invoice}>
+                  <TableCell className="font-medium">
+                    {invoice.invoice}
+                  </TableCell>
+                  <TableCell>{invoice.paymentStatus}</TableCell>
+                  <TableCell>{invoice.paymentMethod}</TableCell>
+                  <TableCell className="text-right">
+                    {invoice.totalAmount}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={3}>Total</TableCell>
+                <TableCell className="text-right">$2,500.00</TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
         </div>
       </div>
     </div>
