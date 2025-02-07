@@ -16,7 +16,7 @@ const BadgeBudgetType = ({ budgetType }: BadgeBudgetTypeProps) => {
   }
   if (budgetType === BudgetType.PRODUCT) {
     return (
-      <Badge className="bg-[hsl(224.3,76.3%,48%)] font-bold text-background hover:bg-[hsl(224.3,76.3%,38%)]">
+      <Badge className="bg-[hsl(224.3,76.3%,48%)] font-bold text-white hover:bg-[hsl(224.3,76.3%,38%)]">
         <Box size={13} className="mr-2" />
         Produto
       </Badge>
@@ -24,7 +24,7 @@ const BadgeBudgetType = ({ budgetType }: BadgeBudgetTypeProps) => {
   }
   if (budgetType === BudgetType.SERVICE) {
     return (
-      <Badge className="bg-[hsl(188,86%,53%)] font-bold text-background hover:bg-[hsl(188,86%,43%)]">
+      <Badge className="bg-[hsl(188,86%,53%)] font-bold text-foreground hover:bg-[hsl(188,86%,43%)]">
         <Wrench size={13} className="mr-2" />
         Serviço
       </Badge>

@@ -1,5 +1,6 @@
 "use client";
 
+import { AdaptedMultiSelect } from "@/app/_components/ui/adapted-multi-selection";
 import { Button } from "@/app/_components/ui/button";
 import {
   Form,
@@ -10,12 +11,18 @@ import {
 
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { Separator } from "@/app/_components/ui/separator";
+import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Products, Services } from "@prisma/client";
 import { useState } from "react";
-// import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+interface GenerateBudgetComponentProps {
+  products: Products[];
+  services: Services[];
+}
 
 const formSchema = z.object({
   clientName: z.string().min(3, {
@@ -28,9 +35,15 @@ const formSchema = z.object({
   clientPhone: z.string().min(11, {
     message: "Telefone deve conter 11 caracteres",
   }),
+  products: z.array(z.string()),
+  services: z.array(z.string()),
+  budgetObservation: z.string().optional(),
 });
 
-const GenerateBudgetComponent = () => {
+const GenerateBudgetComponent = ({
+  products,
+  services,
+}: GenerateBudgetComponentProps) => {
   const [formData, setFormData] = useState({
     clientDocument: "",
     clientPhone: "",
@@ -43,6 +56,9 @@ const GenerateBudgetComponent = () => {
       clientEmail: "",
       clientDocument: "",
       clientPhone: "",
+      products: [],
+      services: [],
+      budgetObservation: "",
     },
   });
 
@@ -91,9 +107,17 @@ const GenerateBudgetComponent = () => {
     });
   };
 
+  const productsWithValueInNumber = products.map((product) => ({
+    ...product,
+    value: Number(product.value),
+  }));
+
+  const servicesWithValueInNumber = services.map((service) => ({
+    ...service,
+    value: Number(service.value),
+  }));
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
   }
 
@@ -196,6 +220,67 @@ const GenerateBudgetComponent = () => {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="products"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <AdaptedMultiSelect
+                        items={productsWithValueInNumber}
+                        variant="product"
+                        onValueChange={(selectedProducts) => {
+                          field.onChange(selectedProducts);
+                          form.clearErrors("products");
+                        }}
+                        placeholder="Selecione os produtos desejados"
+                        label="Produtos"
+                        error={!!form.formState.errors.products}
+                        errorMessage={form.formState.errors.products?.message}
+                        value={field.value}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="services"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <AdaptedMultiSelect
+                        items={servicesWithValueInNumber}
+                        variant="service"
+                        onValueChange={(selectedServices) => {
+                          field.onChange(selectedServices);
+                          form.clearErrors("services");
+                        }}
+                        placeholder="Selecione os serviços desejados"
+                        label="Serviços"
+                        error={!!form.formState.errors.services}
+                        errorMessage={form.formState.errors.services?.message}
+                        value={field.value}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="budgetObservation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Observações..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Submit</Button>
             </form>
           </Form>
