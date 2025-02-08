@@ -23,8 +23,9 @@ import {
 import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Products, Services } from "@prisma/client";
-import { useState } from "react";
+import type { Products, Services } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
+import { useState } from "react"; // Added ReactElement import
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -58,8 +59,9 @@ const GenerateBudgetComponent = ({
     clientPhone: "",
   });
   const [validateCpf, setValidateCpf] = useState(true);
-  const [productsSelected, setProductsSelected] = useState<string[]>([]);
-  const [servicesSelected, setServicesSelected] = useState<string[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<Products[]>([]);
+  const [servicesSelected, setServicesSelected] = useState<Services[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -128,63 +130,36 @@ const GenerateBudgetComponent = ({
     value: Number(service.value),
   }));
 
-  const onChangeProducts = (selectedProducts: string[]) => {
-    setProductsSelected(selectedProducts);
+  const onChangeProducts = (selectedProductIds: string[]) => {
+    const updatedSelectedProducts = selectedProductIds.reduce((acc, id) => {
+      const product = productsWithValueInNumber.find((p) => p.id === id);
+      if (product && !acc.some((p) => p.id === id)) {
+        acc.push({ ...product, value: product.value as unknown as Decimal });
+      }
+      return acc;
+    }, [] as Products[]);
+
+    setSelectedProducts(updatedSelectedProducts);
   };
 
   const onChangeServices = (selectedServices: string[]) => {
-    setServicesSelected(selectedServices);
+    const updatedSelectedServices = selectedServices.reduce((acc, id) => {
+      const service = servicesWithValueInNumber.find((s) => s.id === id);
+      if (service && !acc.some((s) => s.id === id)) {
+        acc.push({ ...service, value: service.value as unknown as Decimal });
+      }
+      return acc;
+    }, [] as Services[]);
+
+    setServicesSelected(updatedSelectedServices);
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    console.log(productsSelected);
+    console.log(selectedProducts);
+
     console.log(servicesSelected);
   }
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
 
   return (
     <div>
@@ -294,10 +269,10 @@ const GenerateBudgetComponent = ({
                       <AdaptedMultiSelect
                         items={productsWithValueInNumber}
                         variant="product"
-                        onValueChange={(selectedProducts) => {
-                          field.onChange(selectedProducts);
+                        onValueChange={(selectedProductIds) => {
+                          field.onChange(selectedProductIds);
                           form.clearErrors("products");
-                          onChangeProducts(selectedProducts);
+                          onChangeProducts(selectedProductIds);
                         }}
                         placeholder="Selecione os produtos desejados"
                         label="Produtos"
@@ -354,33 +329,82 @@ const GenerateBudgetComponent = ({
         </div>
         <div>
           <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableCaption>Simulação de valores do orçamento</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Invoice</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Código</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead className="text-right">Valor (UN)</TableHead>
+                <TableHead className="text-right">Quantidade</TableHead>
+                <TableHead className="text-right">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.invoice}>
-                  <TableCell className="font-medium">
-                    {invoice.invoice}
-                  </TableCell>
-                  <TableCell>{invoice.paymentStatus}</TableCell>
-                  <TableCell>{invoice.paymentMethod}</TableCell>
+              {selectedProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>{product.code}</TableCell>
+                  <TableCell>{product.name}</TableCell>
                   <TableCell className="text-right">
-                    {invoice.totalAmount}
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(product.value))}
+                  </TableCell>
+                  <TableCell className="text-right">1</TableCell>
+                  <TableCell className="text-right">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(product.value))}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {servicesSelected.map((service) => (
+                <TableRow key={service.id}>
+                  <TableCell>{service.code}</TableCell>
+                  <TableCell>{service.name}</TableCell>
+                  <TableCell className="text-right">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(service.value))}
+                  </TableCell>
+                  <TableCell className="text-right">1</TableCell>
+                  <TableCell className="text-right">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(service.value))}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={3}>Total</TableCell>
-                <TableCell className="text-right">$2,500.00</TableCell>
+                <TableCell colSpan={4}>Desconto</TableCell>
+                <TableCell className="text-right">10%</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={4}>Subtotal</TableCell>
+                <TableCell className="text-right">
+                  {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(
+                    selectedProducts.reduce(
+                      (acc, product) => acc + Number(product.value),
+                      0,
+                    ) +
+                      servicesSelected.reduce(
+                        (acc, service) => acc + Number(service.value),
+                        0,
+                      ),
+                  )}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={4}>Total</TableCell>
+                <TableCell className="text-right">Valor com desconto</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
