@@ -8,6 +8,7 @@ import {
   FormField,
   FormItem,
 } from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
 
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import {
@@ -50,6 +51,16 @@ const formSchema = z.object({
   budgetObservation: z.string().optional(),
 });
 
+interface ProductsFull extends Products {
+  valueTotal: number;
+  quantity: number;
+}
+
+interface ServicesFull extends Services {
+  valueTotal: number;
+  quantity: number;
+}
+
 const GenerateBudgetComponent = ({
   products,
   services,
@@ -58,9 +69,12 @@ const GenerateBudgetComponent = ({
     clientDocument: "",
     clientPhone: "",
   });
+
   const [validateCpf, setValidateCpf] = useState(true);
-  const [selectedProducts, setSelectedProducts] = useState<Products[]>([]);
-  const [servicesSelected, setServicesSelected] = useState<Services[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<ProductsFull[]>([]);
+  const [servicesSelected, setServicesSelected] = useState<ServicesFull[]>([]);
+  const [budgetTotal, setBudgetTotal] = useState(0);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -134,10 +148,15 @@ const GenerateBudgetComponent = ({
     const updatedSelectedProducts = selectedProductIds.reduce((acc, id) => {
       const product = productsWithValueInNumber.find((p) => p.id === id);
       if (product && !acc.some((p) => p.id === id)) {
-        acc.push({ ...product, value: product.value as unknown as Decimal });
+        acc.push({
+          ...product,
+          value: product.value as unknown as Decimal,
+          quantity: 1,
+          valueTotal: Number(product.value),
+        });
       }
       return acc;
-    }, [] as Products[]);
+    }, [] as ProductsFull[]);
 
     setSelectedProducts(updatedSelectedProducts);
   };
@@ -146,19 +165,117 @@ const GenerateBudgetComponent = ({
     const updatedSelectedServices = selectedServices.reduce((acc, id) => {
       const service = servicesWithValueInNumber.find((s) => s.id === id);
       if (service && !acc.some((s) => s.id === id)) {
-        acc.push({ ...service, value: service.value as unknown as Decimal });
+        acc.push({
+          ...service,
+          value: service.value as unknown as Decimal,
+          quantity: 1,
+          valueTotal: Number(service.value),
+        });
       }
       return acc;
-    }, [] as Services[]);
+    }, [] as ServicesFull[]);
 
     setServicesSelected(updatedSelectedServices);
   };
 
+  const onChangeTakeValueTotalProduct = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    productId: string,
+  ) => {
+    const { value } = e.target;
+
+    if (Number(value) === 0 || value === "") {
+      e.target.value = "1";
+      return;
+    }
+
+    const updatedSelectedProducts = selectedProducts.map((product) => {
+      if (product.id === productId) {
+        return {
+          ...product,
+          value: product.value as unknown as Decimal,
+          quantity: Number(value),
+          valueTotal: Number(product.value) * Number(value),
+        };
+      }
+      return product;
+    });
+
+    setSelectedProducts(updatedSelectedProducts);
+  };
+
+  const onChangeTakeValueTotalService = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    serviceId: string,
+  ) => {
+    const { value } = e.target;
+
+    if (Number(value) === 0 || value === "") {
+      e.target.value = "1";
+      return;
+    }
+
+    const updatedSelectedServices = servicesSelected.map((service) => {
+      if (service.id === serviceId) {
+        return {
+          ...service,
+          value: service.value as unknown as Decimal,
+          quantity: Number(value),
+          valueTotal: Number(service.value) * Number(value),
+        };
+      }
+      return service;
+    });
+
+    setServicesSelected(updatedSelectedServices);
+  };
+
+  const onChangeSetDiscount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+
+    if (value === 0) {
+      setBudgetTotal(
+        selectedProducts.reduce(
+          (acc, product) => acc + Number(product.valueTotal),
+          0,
+        ) +
+          servicesSelected.reduce(
+            (acc, service) => acc + Number(service.valueTotal),
+            0,
+          ),
+      );
+      setDiscountPercentage(0);
+
+      e.target.value = "0";
+      return;
+    }
+
+    if (value > 100) {
+      e.target.value = "100";
+      return;
+    }
+
+    const budgetTotal =
+      selectedProducts.reduce(
+        (acc, product) => acc + Number(product.valueTotal),
+        0,
+      ) +
+      servicesSelected.reduce(
+        (acc, service) => acc + Number(service.valueTotal),
+        0,
+      );
+
+    setDiscountPercentage(value);
+
+    const valueWhitDiscount = (value / 100) * budgetTotal;
+
+    setBudgetTotal(budgetTotal - valueWhitDiscount);
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    console.log(selectedProducts);
 
-    console.log(servicesSelected);
+    console.log(budgetTotal);
   }
 
   return (
@@ -350,12 +467,22 @@ const GenerateBudgetComponent = ({
                       currency: "BRL",
                     }).format(Number(product.value))}
                   </TableCell>
-                  <TableCell className="text-right">1</TableCell>
+                  <TableCell className="text-right">
+                    <Input
+                      accept="number"
+                      className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      type="number"
+                      defaultValue={product.quantity}
+                      onChange={(e) =>
+                        onChangeTakeValueTotalProduct(e, product.id)
+                      }
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(Number(product.value))}
+                    }).format(Number(product.valueTotal))}
                   </TableCell>
                 </TableRow>
               ))}
@@ -369,7 +496,17 @@ const GenerateBudgetComponent = ({
                       currency: "BRL",
                     }).format(Number(service.value))}
                   </TableCell>
-                  <TableCell className="text-right">1</TableCell>
+                  <TableCell className="text-right">
+                    <Input
+                      accept="number"
+                      className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      type="number"
+                      defaultValue={service.quantity}
+                      onChange={(e) =>
+                        onChangeTakeValueTotalService(e, service.id)
+                      }
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
@@ -381,8 +518,15 @@ const GenerateBudgetComponent = ({
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={4}>Desconto</TableCell>
-                <TableCell className="text-right">10%</TableCell>
+                <TableCell colSpan={4}>Desconto %</TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    accept="number"
+                    className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    type="number"
+                    onChange={(e) => onChangeSetDiscount(e)}
+                  />
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4}>Subtotal</TableCell>
@@ -392,11 +536,11 @@ const GenerateBudgetComponent = ({
                     currency: "BRL",
                   }).format(
                     selectedProducts.reduce(
-                      (acc, product) => acc + Number(product.value),
+                      (acc, product) => acc + Number(product.valueTotal),
                       0,
                     ) +
                       servicesSelected.reduce(
-                        (acc, service) => acc + Number(service.value),
+                        (acc, service) => acc + Number(service.valueTotal),
                         0,
                       ),
                   )}
@@ -404,7 +548,30 @@ const GenerateBudgetComponent = ({
               </TableRow>
               <TableRow>
                 <TableCell colSpan={4}>Total</TableCell>
-                <TableCell className="text-right">Valor com desconto</TableCell>
+                <TableCell className="text-right">
+                  {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(
+                    selectedProducts.reduce(
+                      (acc, product) => acc + Number(product.valueTotal),
+                      0,
+                    ) +
+                      servicesSelected.reduce(
+                        (acc, service) => acc + Number(service.valueTotal),
+                        0,
+                      ) -
+                      (discountPercentage / 100) *
+                        (selectedProducts.reduce(
+                          (acc, product) => acc + Number(product.valueTotal),
+                          0,
+                        ) +
+                          servicesSelected.reduce(
+                            (acc, service) => acc + Number(service.valueTotal),
+                            0,
+                          )),
+                  )}
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>
