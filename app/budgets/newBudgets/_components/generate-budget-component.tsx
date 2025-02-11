@@ -9,8 +9,8 @@ import {
   FormItem,
 } from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
-
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
+import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -25,10 +25,11 @@ import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Products, Services } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
-import { useState } from "react"; // Added ReactElement import
+import type { Decimal } from "@prisma/client/runtime/library";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import type React from "react"; // Added import for React
 
 interface GenerateBudgetComponentProps {
   products: Products[];
@@ -274,17 +275,20 @@ const GenerateBudgetComponent = ({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-
     console.log(budgetTotal);
   }
 
   return (
-    <div>
-      <div className="grid w-full grid-cols-2 justify-between space-x-6">
-        <div>
+    <div className="flex w-full overflow-auto p-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="space-y-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+            <form
+              id="budget-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="clientName"
@@ -333,7 +337,7 @@ const GenerateBudgetComponent = ({
                   )}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="clientEmail"
@@ -440,141 +444,163 @@ const GenerateBudgetComponent = ({
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
             </form>
           </Form>
         </div>
-        <div>
-          <Table>
-            <TableCaption>Simulação de valores do orçamento</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Código</TableHead>
-                <TableHead>Nome</TableHead>
-                <TableHead className="text-right">Valor (UN)</TableHead>
-                <TableHead className="text-right">Quantidade</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {selectedProducts.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>{product.code}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell className="text-right">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(Number(product.value))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Input
-                      accept="number"
-                      className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      type="number"
-                      defaultValue={product.quantity}
-                      onChange={(e) =>
-                        onChangeTakeValueTotalProduct(e, product.id)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(Number(product.valueTotal))}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {servicesSelected.map((service) => (
-                <TableRow key={service.id}>
-                  <TableCell>{service.code}</TableCell>
-                  <TableCell>{service.name}</TableCell>
-                  <TableCell className="text-right">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(Number(service.value))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Input
-                      accept="number"
-                      className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      type="number"
-                      defaultValue={service.quantity}
-                      onChange={(e) =>
-                        onChangeTakeValueTotalService(e, service.id)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(Number(service.value))}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={4}>Desconto %</TableCell>
-                <TableCell className="text-right">
-                  <Input
-                    accept="number"
-                    className="[&::-moz-appearance:textfield] appearance-none text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    type="number"
-                    onChange={(e) => onChangeSetDiscount(e)}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4}>Subtotal</TableCell>
-                <TableCell className="text-right">
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(
-                    selectedProducts.reduce(
-                      (acc, product) => acc + Number(product.valueTotal),
-                      0,
-                    ) +
-                      servicesSelected.reduce(
-                        (acc, service) => acc + Number(service.valueTotal),
-                        0,
-                      ),
-                  )}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4}>Total</TableCell>
-                <TableCell className="text-right">
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(
-                    selectedProducts.reduce(
-                      (acc, product) => acc + Number(product.valueTotal),
-                      0,
-                    ) +
-                      servicesSelected.reduce(
-                        (acc, service) => acc + Number(service.valueTotal),
-                        0,
-                      ) -
-                      (discountPercentage / 100) *
-                        (selectedProducts.reduce(
+        <div className="lg:overflow-hidden">
+          <ScrollArea
+            className="h-[calc(100vh-200px)] w-full"
+            scrollHideDelay={0}
+          >
+            <div className="overflow-x-auto">
+              <Table>
+                <TableCaption className="mb-2">
+                  Simulação de valores do orçamento
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Código</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead className="w-[120px] text-right">
+                      Valor (UN)
+                    </TableHead>
+                    <TableHead className="w-[120px] text-right">
+                      Quantidade
+                    </TableHead>
+                    <TableHead className="w-[120px] text-right">
+                      Total
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {selectedProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>{product.code}</TableCell>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(product.value))}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Input
+                          accept="number"
+                          className="w-20 text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          type="number"
+                          defaultValue={product.quantity}
+                          onChange={(e) =>
+                            onChangeTakeValueTotalProduct(e, product.id)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(product.valueTotal))}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {servicesSelected.map((service) => (
+                    <TableRow key={service.id}>
+                      <TableCell>{service.code}</TableCell>
+                      <TableCell>{service.name}</TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(service.value))}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Input
+                          accept="number"
+                          className="w-20 text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          type="number"
+                          defaultValue={service.quantity}
+                          onChange={(e) =>
+                            onChangeTakeValueTotalService(e, service.id)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(service.valueTotal))}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={4}>Desconto %</TableCell>
+                    <TableCell className="text-right">
+                      <Input
+                        accept="number"
+                        className="w-20 text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        type="number"
+                        onChange={(e) => onChangeSetDiscount(e)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4}>Subtotal</TableCell>
+                    <TableCell className="text-right">
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(
+                        selectedProducts.reduce(
                           (acc, product) => acc + Number(product.valueTotal),
                           0,
                         ) +
                           servicesSelected.reduce(
                             (acc, service) => acc + Number(service.valueTotal),
                             0,
-                          )),
-                  )}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+                          ),
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4}>Total</TableCell>
+                    <TableCell className="text-right">
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(
+                        selectedProducts.reduce(
+                          (acc, product) => acc + Number(product.valueTotal),
+                          0,
+                        ) +
+                          servicesSelected.reduce(
+                            (acc, service) => acc + Number(service.valueTotal),
+                            0,
+                          ) -
+                          (discountPercentage / 100) *
+                            (selectedProducts.reduce(
+                              (acc, product) =>
+                                acc + Number(product.valueTotal),
+                              0,
+                            ) +
+                              servicesSelected.reduce(
+                                (acc, service) =>
+                                  acc + Number(service.valueTotal),
+                                0,
+                              )),
+                      )}
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+              <ScrollBar orientation="horizontal" />
+            </div>
+          </ScrollArea>
+          <div className="mb-8 mt-2 flex justify-start">
+            <Button className="text-white" type="submit" form="budget-form">
+              Gerar Orçamento
+            </Button>
+          </div>
         </div>
       </div>
     </div>
