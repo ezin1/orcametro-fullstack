@@ -29,7 +29,8 @@ import type { Decimal } from "@prisma/client/runtime/library";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import type React from "react"; // Added import for React
+import type React from "react";
+import { generatePdf } from "./pdfmodel";
 
 interface GenerateBudgetComponentProps {
   products: Products[];
@@ -76,7 +77,6 @@ const GenerateBudgetComponent = ({
   const [servicesSelected, setServicesSelected] = useState<ServicesFull[]>([]);
   const [budgetTotal, setBudgetTotal] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -274,8 +274,28 @@ const GenerateBudgetComponent = ({
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    console.log(budgetTotal);
+    const pdfData = {
+      clientInfo: {
+        name: values.clientName,
+        email: values.clientEmail,
+        document: values.clientDocument,
+        phone: values.clientPhone,
+      },
+      products: selectedProducts.map((product) => ({
+        ...product,
+        value: Number(product.value),
+      })),
+      services: servicesSelected.map((service) => ({
+        ...service,
+        value: Number(service.value),
+      })),
+      discountPercentage: discountPercentage,
+      budgetTotal: budgetTotal,
+      observation: values.budgetObservation,
+    };
+
+    const doc = generatePdf(pdfData);
+    doc.save("orcamento.pdf");
   }
 
   return (
@@ -597,7 +617,12 @@ const GenerateBudgetComponent = ({
             </div>
           </ScrollArea>
           <div className="mb-8 mt-2 flex justify-start">
-            <Button className="text-white" type="submit" form="budget-form">
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              className="text-white"
+              type="submit"
+              form="budget-form"
+            >
               Gerar Orçamento
             </Button>
           </div>
