@@ -101,8 +101,8 @@ model Budgets {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
-  products String?
-  services String?
+  products Json?
+  services Json?
   discount Decimal? @db.Decimal(10, 2)
 }
 
