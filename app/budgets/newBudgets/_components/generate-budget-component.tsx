@@ -24,17 +24,24 @@ import {
 import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Products, Services } from "@prisma/client";
+import type { Products, Sellers, Services } from "@prisma/client";
 import type { Decimal } from "@prisma/client/runtime/library";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type React from "react";
 import { generatePdf } from "./pdfmodel";
+import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
+import {
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/app/_components/ui/select";
 
 interface GenerateBudgetComponentProps {
   products: Products[];
   services: Services[];
+  sellers: Sellers[];
 }
 
 const formSchema = z.object({
@@ -51,6 +58,9 @@ const formSchema = z.object({
   products: z.array(z.string()),
   services: z.array(z.string()),
   budgetObservation: z.string().optional(),
+  seller: z.string().min(3, {
+    message: "Vendedor deve conter no mínimo 3 caracteres",
+  }),
 });
 
 interface ProductsFull extends Products {
@@ -66,6 +76,7 @@ interface ServicesFull extends Services {
 const GenerateBudgetComponent = ({
   products,
   services,
+  sellers,
 }: GenerateBudgetComponentProps) => {
   const [formData, setFormData] = useState({
     clientDocument: "",
@@ -87,6 +98,7 @@ const GenerateBudgetComponent = ({
       products: [],
       services: [],
       budgetObservation: "",
+      seller: "",
     },
   });
 
@@ -273,13 +285,24 @@ const GenerateBudgetComponent = ({
     setBudgetTotal(budgetTotal - valueWhitDiscount);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const budgetTotalBeforeDiscount =
+      selectedProducts.reduce(
+        (acc, product) => acc + Number(product.valueTotal),
+        0,
+      ) +
+      servicesSelected.reduce(
+        (acc, service) => acc + Number(service.valueTotal),
+        0,
+      );
+
     const pdfData = {
       clientInfo: {
         name: values.clientName,
         email: values.clientEmail,
         document: values.clientDocument,
         phone: values.clientPhone,
+        expirationDate: new Date().toLocaleDateString(),
       },
       products: selectedProducts.map((product) => ({
         ...product,
@@ -289,13 +312,14 @@ const GenerateBudgetComponent = ({
         ...service,
         value: Number(service.value),
       })),
+      seller: values.seller,
       discountPercentage: discountPercentage,
-      budgetTotal: budgetTotal,
+      budgetTotal: budgetTotal ? budgetTotal : budgetTotalBeforeDiscount,
       observation: values.budgetObservation,
     };
 
     const doc = generatePdf(pdfData);
-    doc.save("orcamento.pdf");
+    (await doc).save("orcamento.pdf");
   }
 
   return (
@@ -401,6 +425,35 @@ const GenerateBudgetComponent = ({
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="seller"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <SelectLabelInBorder
+                        label="Vendedor"
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        error={!!form.formState.errors.seller}
+                        errorMessage={form.formState.errors.seller?.message}
+                      >
+                        <SelectValue placeholder="Selecione o vendedor" />
+                        <SelectContent>
+                          {sellers.map((option) => (
+                            <SelectItem
+                              key={option.sellerId}
+                              value={option.name}
+                            >
+                              {option.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectLabelInBorder>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="products"
