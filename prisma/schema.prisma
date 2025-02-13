@@ -64,6 +64,7 @@ model Products {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
+
 }
 
 model Services {
@@ -76,6 +77,7 @@ model Services {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
+
 }
 
 
@@ -99,6 +101,9 @@ model Budgets {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deleted Boolean @default(false)
+  products String?
+  services String?
+  discount Decimal? @db.Decimal(10, 2)
 }
 
 enum SellersStatus {
@@ -122,4 +127,6 @@ enum BudgetType {
   PRODUCT
   HYBRID
 }
+
+
 

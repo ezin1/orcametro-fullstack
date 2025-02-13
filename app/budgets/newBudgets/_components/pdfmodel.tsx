@@ -50,11 +50,12 @@ export const generatePdf = async (data: PdfGeneratorProps) => {
   const qrCodeData = `https://www.google.com/${crypto.randomBytes(16).toString("hex")}`;
   const qrCodeDataUrl = await QRCode.toDataURL(qrCodeData);
   doc.addImage(qrCodeDataUrl, "PNG", pageWidth - margin - 39, margin, 40, 40);
+  const qrCodeToBase64 = qrCodeDataUrl.split(",")[1];
 
   // Add client information
   doc.setFontSize(12);
 
-  const clientInfoY = 65;
+  const clientInfoY = 60;
   // const clientInfoWidth = pageWidth - 2 * margin
 
   doc.setFont("Roboto", "normal");
@@ -158,5 +159,8 @@ export const generatePdf = async (data: PdfGeneratorProps) => {
     .digest("hex");
   doc.text(sha256, pageWidth - margin, pageHeight - 10, { align: "right" });
 
-  return doc;
+  return {
+    doc,
+    qrCodeToBase64,
+  };
 };

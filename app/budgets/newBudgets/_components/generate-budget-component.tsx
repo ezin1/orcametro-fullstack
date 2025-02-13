@@ -37,6 +37,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/app/_components/ui/select";
+// import { budgetCreate } from "@/app/_data/budgets/budget-create";
 
 interface GenerateBudgetComponentProps {
   products: Products[];
@@ -63,12 +64,12 @@ const formSchema = z.object({
   }),
 });
 
-interface ProductsFull extends Products {
+export interface ProductsFull extends Products {
   valueTotal: number;
   quantity: number;
 }
 
-interface ServicesFull extends Services {
+export interface ServicesFull extends Services {
   valueTotal: number;
   quantity: number;
 }
@@ -318,8 +319,29 @@ const GenerateBudgetComponent = ({
       observation: values.budgetObservation,
     };
 
-    const doc = generatePdf(pdfData);
-    (await doc).save("orcamento.pdf");
+    const returnPdf = generatePdf(pdfData);
+    (await returnPdf).doc.save("orcamento.pdf");
+    const pdfBase64 = (await returnPdf).doc.output("datauristring");
+    const qrCodeBase64 = (await returnPdf).qrCodeToBase64;
+
+    // await budgetCreate({
+    //   budget: {
+    //     clientName: values.clientName,
+    //     clientEmail: values.clientEmail,
+    //     clientDocument: values.clientDocument,
+    //     clientPhone: values.clientPhone,
+    //     products: selectedProducts,
+    //     services: servicesSelected,
+    //     seller: values.seller,
+    //     discountPercentage: discountPercentage,
+    //     budgetTotal: budgetTotal ? budgetTotal : budgetTotalBeforeDiscount,
+    //     observation: values.budgetObservation,
+    //     pdfBase64: pdfBase64,
+    //     qrCodeBase64: qrCodeBase64,
+    //   },
+    // });
+    console.log(pdfBase64);
+    console.log(qrCodeBase64);
   }
 
   return (
