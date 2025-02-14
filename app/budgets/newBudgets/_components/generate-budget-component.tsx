@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/app/_components/ui/textarea";
 import { validateCPF } from "@/app/utils/validate-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Products, Sellers, Services } from "@prisma/client";
+import { type Products, type Sellers, type Services } from "@prisma/client";
 import type { Decimal } from "@prisma/client/runtime/library";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -37,7 +37,10 @@ import {
   SelectItem,
   SelectValue,
 } from "@/app/_components/ui/select";
-// import { budgetCreate } from "@/app/_data/budgets/budget-create";
+import { budgetCreate } from "@/app/_data/budgets/budget-create";
+import { sellerInfoById } from "@/app/_data/sellers/sellers-info";
+import { toDate } from "date-fns";
+import getBudgetType from "./get-budget-type";
 
 interface GenerateBudgetComponentProps {
   products: Products[];
@@ -59,7 +62,7 @@ const formSchema = z.object({
   products: z.array(z.string()),
   services: z.array(z.string()),
   budgetObservation: z.string().optional(),
-  seller: z.string().min(3, {
+  sellerId: z.string().min(3, {
     message: "Vendedor deve conter no mínimo 3 caracteres",
   }),
 });
@@ -99,7 +102,7 @@ const GenerateBudgetComponent = ({
       products: [],
       services: [],
       budgetObservation: "",
-      seller: "",
+      sellerId: "",
     },
   });
 
@@ -297,6 +300,8 @@ const GenerateBudgetComponent = ({
         0,
       );
 
+    const seller = await sellerInfoById(values.sellerId);
+
     const pdfData = {
       clientInfo: {
         name: values.clientName,
@@ -313,7 +318,7 @@ const GenerateBudgetComponent = ({
         ...service,
         value: Number(service.value),
       })),
-      seller: values.seller,
+      seller: seller.verifyIfUserIsSeller?.name || "",
       discountPercentage: discountPercentage,
       budgetTotal: budgetTotal ? budgetTotal : budgetTotalBeforeDiscount,
       observation: values.budgetObservation,
@@ -321,25 +326,37 @@ const GenerateBudgetComponent = ({
 
     const returnPdf = generatePdf(pdfData);
     (await returnPdf).doc.save("orcamento.pdf");
-    const pdfBase64 = (await returnPdf).doc.output("datauristring");
+    const pdfBase64 = (await returnPdf).doc
+      .output("datauristring")
+      .split(",")[1];
     const qrCodeBase64 = (await returnPdf).qrCodeToBase64;
 
-    // await budgetCreate({
-    //   budget: {
-    //     clientName: values.clientName,
-    //     clientEmail: values.clientEmail,
-    //     clientDocument: values.clientDocument,
-    //     clientPhone: values.clientPhone,
-    //     products: selectedProducts,
-    //     services: servicesSelected,
-    //     seller: values.seller,
-    //     discountPercentage: discountPercentage,
-    //     budgetTotal: budgetTotal ? budgetTotal : budgetTotalBeforeDiscount,
-    //     observation: values.budgetObservation,
-    //     pdfBase64: pdfBase64,
-    //     qrCodeBase64: qrCodeBase64,
-    //   },
-    // });
+    const budgetType = getBudgetType({
+      products: selectedProducts,
+      services: servicesSelected,
+    });
+
+    await budgetCreate({
+      budget: {
+        value: budgetTotal ? budgetTotal : budgetTotalBeforeDiscount,
+        sellerId: values.sellerId,
+        clientName: values.clientName,
+        clientEmail: values.clientEmail,
+        clientDocument: values.clientDocument,
+        clientPhone: values.clientPhone,
+        products: selectedProducts,
+        services: servicesSelected,
+        discount: discountPercentage,
+        budgetObservation: values.budgetObservation || "",
+        budgetPdf: pdfBase64,
+        validationQRCode: qrCodeBase64,
+        budgetType: budgetType,
+        description: `Orçamento - ${values.clientDocument} - ${new Date().toLocaleDateString()}`,
+        budgetStatus: "PENDING",
+        expirationDate: toDate(new Date().setDate(new Date().getDate() + 30)),
+      },
+    });
+
     console.log(pdfBase64);
     console.log(qrCodeBase64);
   }
@@ -449,7 +466,7 @@ const GenerateBudgetComponent = ({
               </div>
               <FormField
                 control={form.control}
-                name="seller"
+                name="sellerId"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -457,15 +474,15 @@ const GenerateBudgetComponent = ({
                         label="Vendedor"
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        error={!!form.formState.errors.seller}
-                        errorMessage={form.formState.errors.seller?.message}
+                        error={!!form.formState.errors.sellerId}
+                        errorMessage={form.formState.errors.sellerId?.message}
                       >
                         <SelectValue placeholder="Selecione o vendedor" />
                         <SelectContent>
                           {sellers.map((option) => (
                             <SelectItem
                               key={option.sellerId}
-                              value={option.name}
+                              value={option.sellerId}
                             >
                               {option.name}
                             </SelectItem>
