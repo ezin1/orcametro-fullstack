@@ -16,9 +16,15 @@ import { EyeIcon } from "lucide-react";
 import { useState } from "react";
 import BadgeBudgetStatus from "./badge-budget-status";
 import BadgeBudgetType from "./badge-budget-type";
-import { BudgetStatus, BudgetType } from "@prisma/client";
+import { BudgetStatus, BudgetType, Prisma } from "@prisma/client";
 import ButtonViewBudgetPDF from "./button-view-budget-pdf";
 import ButtonDialogValidatePDF from "./button-dialog-validate-budget";
+import { SelectLabelInBorder } from "@/app/_components/ui/select-label-in-border";
+import {
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/app/_components/ui/select";
 
 interface DrawerViewBudgetInfoProps {
   budget: {
@@ -38,12 +44,22 @@ interface DrawerViewBudgetInfoProps {
     sellerName: string;
     updatedAt: Date;
     budgetPdf: string;
+    products: Prisma.JsonValue;
+    services: Prisma.JsonValue;
   };
 }
 
 export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const productsArray =
+    typeof budget.products === "string"
+      ? JSON.parse(budget.products)
+      : budget.products;
+  const servicesArray =
+    typeof budget.services === "string"
+      ? JSON.parse(budget.services)
+      : budget.services;
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger>
@@ -91,7 +107,7 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
               </div>
             </LabeledCard>
             <LabeledCard label="Informações do Orçamento">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="grid grid-cols-[auto,auto] gap-4">
                   <LabeledInfo label="Vendedor" content={budget.sellerName} />
                   <LabeledInfo
@@ -101,6 +117,38 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
                       currency: "BRL",
                     })}
                   />
+                </div>
+                <div className="grid grid-cols-2 justify-between gap-4">
+                  <SelectLabelInBorder label="Produtos">
+                    <SelectValue placeholder="Visualizar os produtos" />
+                    <SelectContent>
+                      {Array.isArray(productsArray) &&
+                        productsArray.map((option) => (
+                          <SelectItem key={option.id} value={option.name}>
+                            {option.name} - {option.quantity} -{" "}
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(Number(option.valueTotal))}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </SelectLabelInBorder>
+                  <SelectLabelInBorder label="Serviços">
+                    <SelectValue placeholder="Visualizar os serviços" />
+                    <SelectContent>
+                      {Array.isArray(servicesArray) &&
+                        servicesArray.map((option) => (
+                          <SelectItem key={option.id} value={option.name}>
+                            {option.name} - {option.quantity} -{" "}
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(Number(option.valueTotal))}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </SelectLabelInBorder>
                 </div>
                 <div className="grid grid-cols-2 justify-between gap-4">
                   <LabeledInfo
