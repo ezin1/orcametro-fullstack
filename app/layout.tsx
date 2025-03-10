@@ -43,23 +43,25 @@ export default async function RootLayout({
             }}
           >
             {!userId ? (
-              <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+              <div className="flex h-full w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                 {children}
                 <Toaster />
               </div>
             ) : (
-              <SidebarProvider>
-                <AppSidebar />
-                <main>
-                  <div>
-                    <SidebarTrigger />
-                  </div>
-                  <div className="flex h-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
-                    {children}
-                    <Toaster />
-                  </div>
-                </main>
-              </SidebarProvider>
+              <div className="flex">
+                <SidebarProvider className="flex">
+                  <AppSidebar />
+                  <main>
+                    <div>
+                      <SidebarTrigger />
+                    </div>
+                    <div className="flex h-full w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+                      {children}
+                      <Toaster />
+                    </div>
+                  </main>
+                </SidebarProvider>
+              </div>
             )}
             <ModeToggle />
           </ClerkProvider>
