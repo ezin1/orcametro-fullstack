@@ -42,6 +42,8 @@ import { sellerInfoById } from "@/app/_data/sellers/sellers-info";
 import { toDate } from "date-fns";
 import getBudgetType from "./get-budget-type";
 
+import { useRouter } from "next/navigation";
+
 interface GenerateBudgetComponentProps {
   products: Products[];
   services: Services[];
@@ -86,7 +88,7 @@ const GenerateBudgetComponent = ({
     clientDocument: "",
     clientPhone: "",
   });
-
+  const router = useRouter();
   const [validateCpf, setValidateCpf] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState<ProductsFull[]>([]);
   const [servicesSelected, setServicesSelected] = useState<ServicesFull[]>([]);
@@ -357,8 +359,12 @@ const GenerateBudgetComponent = ({
       },
     });
 
-    console.log(pdfBase64);
-    console.log(qrCodeBase64);
+    form.reset();
+    setSelectedProducts([]);
+    setServicesSelected([]);
+    setBudgetTotal(0);
+
+    router.push("/budgets/myBudgets");
   }
 
   return (
