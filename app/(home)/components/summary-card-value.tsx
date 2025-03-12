@@ -22,7 +22,7 @@ const SumaryCardValue = ({ value, title, icon }: SumaryCardValueProps) => {
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center justify-center">
+      <CardContent className="flex items-start justify-start">
         <p className="text-2xl font-bold">{value}</p>
       </CardContent>
     </Card>

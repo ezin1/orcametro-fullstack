@@ -19,6 +19,7 @@ import {
 import SumaryCardMoney from "./components/summary-card-money";
 import SumaryCardValue from "./components/summary-card-value";
 import SalesPerSeller from "./components/sales-per-seller-chart";
+import SalesPerMonth from "./components/sales-per-month-chart";
 
 const HomePage = async () => {
   const { userId, orgId } = await auth();
@@ -43,7 +44,7 @@ const HomePage = async () => {
   const salesMonthly = await salesMonthlyByOrg();
   const pendingSalesMonthly = await pendingSalesMonthlyByOrg();
   const salesPerSeller = await salesPerSellerByOrg();
-  console.log(salesPerSeller);
+
   return (
     <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
       <div className="flex w-full items-center justify-between">
@@ -75,7 +76,7 @@ const HomePage = async () => {
       </div>
       <div className="flex flex-row justify-between gap-5 px-5">
         <SalesPerSeller salesPerSeller={salesPerSeller} />
-        <SalesPerSeller salesPerSeller={salesPerSeller} />
+        <SalesPerMonth salesPerMonth={budgetsInfo.salesPerMonth} />
       </div>
       <MyMemberships isOpenDialog={isOpenDialog} orgId={orgId} />
     </div>
