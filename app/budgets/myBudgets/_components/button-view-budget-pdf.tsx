@@ -27,7 +27,11 @@ const ButtonViewBudgetPDF = ({ pdfBase64 }: { pdfBase64: string }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <Button className="text-white" onClick={handleViewPDF}>
+          <Button
+            className="text-white"
+            onClick={handleViewPDF}
+            variant="outline"
+          >
             <FileSearch className="h-4 w-4" />
           </Button>
         </TooltipTrigger>

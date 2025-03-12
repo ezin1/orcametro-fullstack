@@ -25,6 +25,8 @@ import {
   SelectItem,
   SelectValue,
 } from "@/app/_components/ui/select";
+import ButtonSendBudgetMail from "./button-send-budget-email";
+import ButtonSendBudgetWhats from "./button-send-budget-whats";
 
 interface DrawerViewBudgetInfoProps {
   budget: {
@@ -182,12 +184,14 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
             </DrawerClose>
 
             <div className="flex flex-row space-x-2">
+              <ButtonSendBudgetMail />
+              <ButtonSendBudgetWhats />
+              <ButtonViewBudgetPDF pdfBase64={budget.budgetPdf} />
               <ButtonDialogValidatePDF
                 id={budget.id}
                 sellerId={budget.sellerId}
                 budgetStatus={budget.budgetStatus}
               />
-              <ButtonViewBudgetPDF pdfBase64={budget.budgetPdf} />
             </div>
           </DrawerFooter>
         </div>
