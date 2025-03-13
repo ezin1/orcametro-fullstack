@@ -55,6 +55,7 @@
     "react-number-format": "^5.4.3",
     "react-to-print": "^3.0.5",
     "recharts": "^2.15.1",
+    "resend": "^4.1.2",
     "stripe": "^17.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
