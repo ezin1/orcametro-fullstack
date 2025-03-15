@@ -472,7 +472,7 @@ const SidebarGroupLabel = React.forwardRef<
       {open ? (
         <Image
           src="/logo.png"
-          width={187}
+          width={195}
           height={49}
           alt="Orçametro"
           className="mt-3"

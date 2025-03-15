@@ -11,8 +11,12 @@ export async function POST() {
       to: ["eziof.dev@gmail.com"], // Corrigi um erro no email
       subject: "TESTE",
       react: SendBudgetEmail({
-        name: "Ezio",
-        previewText: "Teste",
+        clientName: "Ézio",
+        projectName: "Projeto",
+        budgetValue: "R$ 0,00",
+        budgetId: "ORÇ-0001",
+        validUntil: "30 dias",
+        previewText: "Seu orçamento está pronto!",
       }),
     });
 
