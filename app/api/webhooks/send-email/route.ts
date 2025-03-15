@@ -1,18 +1,27 @@
 import { Resend } from "resend";
+import SendBudgetEmail from "./model-email";
+import { NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 
 export async function POST() {
   try {
     const data = await resend.emails.send({
-      from: `eziof.dev@gmail.com <eziof.dev@gmail.com>`,
-      to: ["eziofeitt15@gmai.com"],
+      from: `Ézio <onboarding@resend.dev>`,
+      to: ["eziof.dev@gmail.com"], // Corrigi um erro no email
       subject: "TESTE",
-      html: "<h1>TESTE</h1>",
+      react: SendBudgetEmail({
+        name: "Ezio",
+        previewText: "Teste",
+      }),
     });
 
-    return data;
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.log(error);
+    console.error("Erro ao enviar e-mail:", error);
+    return NextResponse.json(
+      { success: false, message: "Erro ao enviar e-mail" },
+      { status: 500 },
+    );
   }
 }
