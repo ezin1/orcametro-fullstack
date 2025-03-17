@@ -22,20 +22,32 @@ const SubscripionsPage = async () => {
     {
       name: "Basic",
       description: "Plano inicial",
-      price: 15.99,
-      features: ["Feature 1", "Feature 2", "Feature 3"],
+      price: 25.99,
+      features: [
+        "150 orçamentos semanais",
+        "3 usuários",
+        "1 método de envio liberado",
+      ],
     },
     {
       name: "Standard",
       description: "Plano intermediário",
-      price: 23.99,
-      features: ["Feature 1", "Feature 2", "Feature 3"],
+      price: 33.99,
+      features: [
+        "Orçamentos Ilimitados",
+        "10 usuários",
+        "2 métodos de envio liberados",
+      ],
     },
     {
       name: "Premium",
       description: "Plano completo",
-      price: 35.99,
-      features: ["Feature 1", "Feature 2", "Feature 3"],
+      price: 55.99,
+      features: [
+        "Orçamentos Ilimitados",
+        "Usuários Ilimitados",
+        "Todos os métodos de envio liberados",
+      ],
     },
   ];
 
