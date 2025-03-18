@@ -64,7 +64,7 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
       : budget.services;
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button
           size="icon"
           className="text-white"
