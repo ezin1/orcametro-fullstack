@@ -75,7 +75,7 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full">
-          <DrawerHeader className="space-y-3">
+          <DrawerHeader className="space-y-2">
             <DrawerTitle className="font-bold">
               Informações do Orçamento
             </DrawerTitle>
@@ -167,6 +167,7 @@ export function DrawerViewBudgetInfo({ budget }: DrawerViewBudgetInfoProps) {
                   />
                 </div>
                 <LabeledInfo
+                  className="h-[120px] w-full 2xl:h-[150px]"
                   label="Observações"
                   content={budget.budgetObservation || "Sem observações"}
                 />
