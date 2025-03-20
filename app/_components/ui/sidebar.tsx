@@ -21,6 +21,8 @@ import {
 import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
+import { dark } from "@clerk/themes";
+import { useTheme } from "next-themes";
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
@@ -382,7 +384,7 @@ const SidebarFooter = React.forwardRef<
   React.ComponentProps<"div">
 >(({ className, ...props }, ref) => {
   const { open } = useSidebar();
-
+  const { resolvedTheme } = useTheme();
   return (
     <div
       ref={ref}
@@ -391,7 +393,16 @@ const SidebarFooter = React.forwardRef<
       {...props}
     >
       <div className="flex justify-center gap-4">
-        {open ? <UserButton showName /> : <UserButton />}
+        {open ? (
+          <UserButton
+            showName
+            appearance={{
+              baseTheme: resolvedTheme === "dark" ? dark : undefined,
+            }}
+          />
+        ) : (
+          <UserButton />
+        )}
         {open && (
           <SignOutButton>
             <LogOut className="border-l-2 pl-2" />

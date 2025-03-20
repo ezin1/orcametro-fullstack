@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+
 import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 import { auth } from "@clerk/nextjs/server";
@@ -37,11 +37,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider
-            appearance={{
-              baseTheme: dark,
-            }}
-          >
+          <ClerkProvider>
             {!userId ? (
               <div className="flex h-full w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                 {children}
