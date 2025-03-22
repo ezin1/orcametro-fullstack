@@ -23,6 +23,7 @@ import { LogOut } from "lucide-react";
 import Image from "next/image";
 import { dark } from "@clerk/themes";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
@@ -481,21 +482,25 @@ const SidebarGroupLabel = React.forwardRef<
       {...props}
     >
       {open ? (
-        <Image
-          src="/logo.png"
-          width={195}
-          height={49}
-          alt="Orçametro"
-          className="mt-3"
-        />
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            width={195}
+            height={49}
+            alt="Orçametro"
+            className="mt-3"
+          />
+        </Link>
       ) : (
-        <Image
-          src="/iconLogo.png"
-          width={32}
-          height={32}
-          alt="OrçametroIcon"
-          className="mt-3 items-center"
-        />
+        <Link href="/">
+          <Image
+            src="/iconLogo.png"
+            width={32}
+            height={32}
+            alt="OrçametroIcon"
+            className="mt-3 items-center"
+          />
+        </Link>
       )}
     </Comp>
   );

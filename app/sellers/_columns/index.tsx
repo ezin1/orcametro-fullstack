@@ -18,6 +18,13 @@ export const sellersColumns: ColumnDef<Sellers>[] = [
     header: "Nome",
   },
   {
+    accessorKey: "sellerPermission",
+    header: "Permissão",
+    cell: ({ row: { original: seller } }) => {
+      return seller.sellerPermission === "ADMIN" ? "Administrador" : "Vendedor";
+    },
+  },
+  {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row: { original: seller } }) => {

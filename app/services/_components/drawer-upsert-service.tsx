@@ -86,7 +86,7 @@ export function DrawerUpsertServices({
 
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button
           size="icon"
           className="text-white"
