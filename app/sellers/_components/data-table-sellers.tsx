@@ -38,7 +38,7 @@ const DataTableSellers = ({ sellersTotal }: dataTableSellersProps) => {
         />
         <CreateSellerButton />
       </div>
-      <ScrollArea className="h-[570px] lg:h-[600px] 2xl:h-[820px]">
+      <ScrollArea className="h-full lg:h-[530px] 2xl:h-[750px]">
         <DataTable
           columns={sellersColumns}
           data={JSON.parse(JSON.stringify(sellers))}
