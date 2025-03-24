@@ -54,7 +54,7 @@ const SelectLabelInBorder = React.forwardRef<
           </SelectPrimitive.Trigger>
           <Label
             className={cn(
-              "absolute left-3 top-0 bg-background px-1 text-xs",
+              "absolute left-3 top-0 bg-background px-1 text-xs text-primary",
               error ? "text-destructive" : "text-muted-foreground",
             )}
             style={{ transform: "translateY(-50%)" }}
