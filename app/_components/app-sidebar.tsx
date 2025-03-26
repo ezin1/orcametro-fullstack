@@ -27,6 +27,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import type { SellerPermission } from "@prisma/client";
 
 // Menu items.
 const items = [
@@ -75,7 +76,17 @@ const subItemsBudgets = [
   },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({
+  sellerPermission,
+}: {
+  sellerPermission: SellerPermission;
+}) {
+  // Filter items based on seller permission
+  const visibleItems =
+    sellerPermission === "SELLER"
+      ? items.filter((item) => item.title === "Orçamentos")
+      : items;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -83,7 +94,7 @@ export function AppSidebar() {
           <SidebarGroupLabel className="mb-4 flex items-center justify-center"></SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) =>
+              {visibleItems.map((item) =>
                 item.title === "Orçamentos" ? (
                   <Collapsible
                     key={item.title}
