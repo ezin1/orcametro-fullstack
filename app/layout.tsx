@@ -5,12 +5,10 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import { SidebarProvider, SidebarTrigger } from "./_components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { ThemeProvider } from "./_components/theme-provider";
 import { ModeToggle } from "./_components/mode-toggle";
 import { Toaster } from "./_components/ui/toaster";
-import { getSellerInfoByEmail } from "./_data/sellers/sellers-info";
-import { redirect } from "next/navigation";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -27,16 +25,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { userId } = await auth();
-
-  if (!userId) {
-    redirect("/login");
-  }
-
-  const user = await (await clerkClient()).users.getUser(userId);
-  const userEmail = user.emailAddresses[0].emailAddress;
-
-  const sellerInfoByEmail = await getSellerInfoByEmail(userEmail);
-  const defaultSellerPermission = "SELLER";
   return (
     <html lang="en">
       <head>
@@ -58,12 +46,7 @@ export default async function RootLayout({
             ) : (
               <div className="flex">
                 <SidebarProvider className="flex">
-                  <AppSidebar
-                    sellerPermission={
-                      sellerInfoByEmail.verifyIfUserIsSeller
-                        ?.sellerPermission ?? defaultSellerPermission
-                    }
-                  />
+                  <AppSidebar />
                   <main>
                     <div>
                       <SidebarTrigger />

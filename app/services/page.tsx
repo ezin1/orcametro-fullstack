@@ -1,9 +1,8 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
 import { db } from "../_lib/prisma";
 import DataTableServices from "./_components/data-table-services";
-import { getSellerInfoByEmail } from "../_data/sellers/sellers-info";
 
 const CategoriesPage = async () => {
   const { userId, orgId } = await auth();
@@ -16,15 +15,6 @@ const CategoriesPage = async () => {
 
   if (!userInfo.verifyIfUserIsRegistered) {
     redirect("/register");
-  }
-
-  const user = await (await clerkClient()).users.getUser(userId);
-  const userEmail = user.emailAddresses[0].emailAddress;
-
-  const sellerInfoByEmail = await getSellerInfoByEmail(userEmail);
-
-  if (sellerInfoByEmail.verifyIfUserIsSeller?.sellerPermission !== "ADMIN") {
-    redirect("/unauthorized");
   }
 
   const services = await db.services.findMany({
