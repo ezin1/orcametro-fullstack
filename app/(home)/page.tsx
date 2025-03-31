@@ -1,5 +1,5 @@
 // import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
 import { MyMemberships } from "../utils/clerk/dialog-manage-user-organization";
@@ -20,6 +20,7 @@ import SumaryCardMoney from "./components/summary-card-money";
 import SumaryCardValue from "./components/summary-card-value";
 import SalesPerSeller from "./components/sales-per-seller-chart";
 import SalesPerMonth from "./components/sales-per-month-chart";
+import { getSellerInfoByEmail } from "../_data/sellers/sellers-info";
 
 const HomePage = async () => {
   const { userId, orgId } = await auth();
@@ -45,6 +46,14 @@ const HomePage = async () => {
   const pendingSalesMonthly = await pendingSalesMonthlyByOrg();
   const salesPerSeller = await salesPerSellerByOrg();
 
+  const user = await (await clerkClient()).users.getUser(userId);
+  const userEmail = user.emailAddresses[0].emailAddress;
+
+  const sellerInfoByEmail = await getSellerInfoByEmail(userEmail);
+
+  if (sellerInfoByEmail.verifyIfUserIsSeller?.sellerPermission !== "ADMIN") {
+    redirect("/budgets/newBudgets");
+  }
   return (
     <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
       <div className="flex w-full items-center justify-between">
