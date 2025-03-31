@@ -27,7 +27,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import type { SellerPermission } from "@prisma/client";
+import { getSellerInfoByEmail } from "../_data/sellers/sellers-info";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 // Menu items.
 const items = [
@@ -76,11 +77,23 @@ const subItemsBudgets = [
   },
 ];
 
-export function AppSidebar({
-  sellerPermission,
-}: {
-  sellerPermission: SellerPermission;
-}) {
+export async function AppSidebar() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+  const user = await (await clerkClient()).users.getUser(userId);
+
+  const userEmail = user.emailAddresses[0].emailAddress;
+
+  const sellerInfoByEmail = await getSellerInfoByEmail(userEmail);
+
+  let sellerPermission =
+    sellerInfoByEmail?.verifyIfUserIsSeller?.sellerPermission;
+  if (!sellerPermission) {
+    sellerPermission = "SELLER";
+  }
   // Filter items based on seller permission
   const visibleItems =
     sellerPermission === "SELLER"
