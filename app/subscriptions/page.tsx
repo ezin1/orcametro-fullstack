@@ -1,8 +1,7 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { usersInfo } from "../_data/users/users-info";
 import CardPlan from "./_components/card-plan";
-import { getSellerInfoByEmail } from "../_data/sellers/sellers-info";
 
 const SubscripionsPage = async () => {
   const { userId } = await auth();
@@ -15,15 +14,6 @@ const SubscripionsPage = async () => {
 
   if (!userInfo.verifyIfUserIsRegistered) {
     redirect("/register");
-  }
-
-  const user = await (await clerkClient()).users.getUser(userId);
-  const userEmail = user.emailAddresses[0].emailAddress;
-
-  const sellerInfoByEmail = await getSellerInfoByEmail(userEmail);
-
-  if (sellerInfoByEmail.verifyIfUserIsSeller?.sellerPermission !== "ADMIN") {
-    redirect("/unauthorized");
   }
 
   const userPlan = userInfo.verifyIfUserIsRegistered.userPlan;

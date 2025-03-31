@@ -22,7 +22,7 @@ import { Loader2Icon } from "lucide-react";
 import { usersRegister } from "@/app/_data/users/users-register";
 import { InputLabelInBorder } from "@/app/_components/ui/input-label-in-border";
 import { useToast } from "@/app/_hooks/use-toast";
-import { getSellerInfoByEmail } from "@/app/_data/sellers/sellers-info";
+import { sellerInfoByEmail } from "@/app/_data/sellers/sellers-info";
 import { getPlanByUserId } from "@/app/_data/users/users-info";
 
 const commonFields = {
@@ -293,7 +293,7 @@ export const FormRegister = ({
         setValidateCep(false);
       }
 
-      const sellerInfo = await getSellerInfoByEmail(data.email);
+      const sellerInfo = await sellerInfoByEmail(data.email);
 
       if (sellerInfo.verifyIfUserIsSeller) {
         const sellerCreatorUserPlan = await getPlanByUserId(
