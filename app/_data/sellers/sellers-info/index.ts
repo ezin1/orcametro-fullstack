@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/app/_lib/prisma";
 
-export const getSellerInfoByEmail = async (email: string) => {
+export const sellerInfoByEmail = async (email: string) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
