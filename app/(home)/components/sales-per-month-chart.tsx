@@ -93,7 +93,7 @@ const SalesPerMonth = ({ salesPerMonth }: SalesPerMonthProps) => {
   };
 
   return (
-    <Card className="flex w-[48%] flex-col p-3 shadow-sm shadow-primary">
+    <Card className="flex w-full min-w-0 flex-col p-3 shadow-sm shadow-primary">
       <CardHeader className="flex flex-row items-center gap-2">
         <LineChartIcon size={16} />
         <CardTitle className="text-start text-sm text-muted-foreground">

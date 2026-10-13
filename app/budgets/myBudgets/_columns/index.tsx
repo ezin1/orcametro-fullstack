@@ -57,10 +57,10 @@ export const budgetsColumns: ColumnDef<Budgets & { sellerName: string }>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Ações",
+    header: () => <div className="text-right">Ações</div>,
     cell: ({ row: { original: budget } }) => {
       return (
-        <div className="flex flex-row space-x-1">
+        <div className="flex flex-row justify-end space-x-1">
           <DrawerViewBudgetInfo
             budget={{
               ...budget,

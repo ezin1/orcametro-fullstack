@@ -30,15 +30,15 @@ const DataTableServices = ({ servicesTotal }: dataTableServicesProps) => {
 
   return (
     <>
-      <div className="flex w-full items-center justify-between">
+      <div className="flex w-full shrink-0 items-center justify-between gap-2">
         <Input
           placeholder="Filtrar serviços..."
           onChange={(event) => onFilterServices(event.target.value)}
-          className="w-[70%]"
+          className="flex-1 sm:w-[70%] sm:flex-none"
         />
         <CreateServiceButton />
       </div>
-      <ScrollArea className="h-full lg:h-[530px] 2xl:h-[750px]">
+      <ScrollArea className="h-full min-h-0 w-full flex-1">
         <DataTable
           columns={servicesColumns}
           data={JSON.parse(JSON.stringify(services))}

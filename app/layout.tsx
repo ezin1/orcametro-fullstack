@@ -39,19 +39,19 @@ export default async function RootLayout({
         >
           <ClerkProvider>
             {!userId ? (
-              <div className="flex h-full w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+              <div className="flex h-svh w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                 {children}
                 <Toaster />
               </div>
             ) : (
-              <div className="flex">
-                <SidebarProvider className="flex">
+              <div className="flex h-svh w-full overflow-hidden">
+                <SidebarProvider className="flex h-svh w-full overflow-hidden">
                   <AppSidebar />
-                  <main>
-                    <div>
+                  <main className="flex h-svh w-full min-w-0 flex-1 flex-col overflow-hidden">
+                    <div className="shrink-0 px-4 pt-2 md:px-2">
                       <SidebarTrigger />
                     </div>
-                    <div className="flex h-full w-full flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
+                    <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden text-base sm:text-lg md:text-sm lg:text-sm">
                       {children}
                       <Toaster />
                     </div>

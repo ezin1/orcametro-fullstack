@@ -29,10 +29,10 @@ interface CardPlanProps {
 const CardPlan = ({ plans, userPlan, userId }: CardPlanProps) => {
   const { user } = useUser();
   return (
-    <ScrollArea className="h-[700px]">
-      <div className="mb-36 flex w-full flex-col items-center justify-between gap-6 sm:flex-row md:flex-row lg:flex-row xl:flex-row">
+    <ScrollArea className="h-full min-h-0 w-full flex-1">
+      <div className="mb-12 flex w-full flex-col items-center justify-between gap-6 pb-8 lg:flex-row">
         {plans.map((plans) => (
-          <Card key={plans.name} className="w-[300px]">
+          <Card key={plans.name} className="w-full max-w-[320px]">
             <CardHeader className="relative items-center justify-center">
               {user?.publicMetadata.subscriptionPlan === plans.name ? (
                 <Badge className="absolute right-4 top-4 bg-primary text-white">

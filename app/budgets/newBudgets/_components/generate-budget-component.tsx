@@ -368,9 +368,9 @@ const GenerateBudgetComponent = ({
   }
 
   return (
-    <div className="flex w-full overflow-auto p-4">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
+    <div className="flex min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden p-1 md:p-4">
+      <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="min-w-0 space-y-6">
           <Form {...form}>
             <form
               id="budget-form"
@@ -565,9 +565,9 @@ const GenerateBudgetComponent = ({
             </form>
           </Form>
         </div>
-        <div className="lg:overflow-hidden">
+        <div className="min-w-0 lg:overflow-hidden">
           <ScrollArea
-            className="h-[calc(100vh-200px)] w-full"
+            className="h-[340px] w-full lg:h-[calc(100vh-220px)]"
             scrollHideDelay={0}
           >
             <div className="overflow-x-auto">

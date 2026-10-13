@@ -39,9 +39,9 @@ const MyBudgetsPage = async () => {
 
   return (
     <>
-      <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
-        <div className="flex w-full items-center justify-between">
-          <h1 className="text-base font-bold sm:text-sm md:text-lg lg:text-2xl">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col space-y-4 overflow-hidden p-4 md:space-y-6 md:p-6">
+        <div className="flex w-full shrink-0 items-center justify-between">
+          <h1 className="text-lg font-bold md:text-xl lg:text-2xl">
             Meus Orçamentos
           </h1>
         </div>

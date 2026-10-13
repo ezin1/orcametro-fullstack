@@ -46,37 +46,37 @@ const HomePage = async () => {
   const salesPerSeller = await salesPerSellerByOrg();
 
   return (
-    <div className="flex h-screen flex-col space-y-6 overflow-hidden p-6">
-      <div className="flex w-full items-center justify-between">
-        <h1 className="text-base font-bold sm:text-sm md:text-lg lg:text-2xl">
-          Dashboard
-        </h1>
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col space-y-4 overflow-hidden p-4 md:space-y-6 md:p-6">
+      <div className="flex w-full shrink-0 items-center justify-between">
+        <h1 className="text-lg font-bold md:text-xl lg:text-2xl">Dashboard</h1>
       </div>
-      <div className="flex w-full grid-cols-3 flex-row p-5 lg:gap-12 2xl:gap-44">
-        <SumaryCardMoney
-          value={budgetsInfo.totalRevenue}
-          title="Faturamento total"
-          icon={<DollarSign size={16} className="text-green-400" />}
-        />
-        <SumaryCardMoney
-          value={totalRevenueMonthly}
-          title="Faturamento mensal"
-          icon={<CalendarArrowUp size={16} className="text-green-400" />}
-        />
-        <SumaryCardValue
-          value={salesMonthly}
-          title="Vendas mensal"
-          icon={<ShoppingCart size={16} className="text-primary" />}
-        />
-        <SumaryCardValue
-          value={pendingSalesMonthly}
-          title="Vendas pendentes do mês"
-          icon={<CalendarClock size={16} className="text-white" />}
-        />
-      </div>
-      <div className="flex flex-row justify-between gap-5 px-5">
-        <SalesPerSeller salesPerSeller={salesPerSeller} />
-        <SalesPerMonth salesPerMonth={budgetsInfo.salesPerMonth} />
+      <div className="flex min-h-0 flex-1 flex-col space-y-6 overflow-y-auto overflow-x-hidden pb-6 pr-1">
+        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <SumaryCardMoney
+            value={budgetsInfo.totalRevenue}
+            title="Faturamento total"
+            icon={<DollarSign size={16} className="text-green-400" />}
+          />
+          <SumaryCardMoney
+            value={totalRevenueMonthly}
+            title="Faturamento mensal"
+            icon={<CalendarArrowUp size={16} className="text-green-400" />}
+          />
+          <SumaryCardValue
+            value={salesMonthly}
+            title="Vendas mensal"
+            icon={<ShoppingCart size={16} className="text-primary" />}
+          />
+          <SumaryCardValue
+            value={pendingSalesMonthly}
+            title="Vendas pendentes do mês"
+            icon={<CalendarClock size={16} className="text-white" />}
+          />
+        </div>
+        <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2">
+          <SalesPerSeller salesPerSeller={salesPerSeller} />
+          <SalesPerMonth salesPerMonth={budgetsInfo.salesPerMonth} />
+        </div>
       </div>
       <MyMemberships isOpenDialog={isOpenDialog} orgId={orgId} />
     </div>

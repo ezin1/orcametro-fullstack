@@ -28,10 +28,10 @@ export const productsColumns: ColumnDef<Products>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Ações",
+    header: () => <div className="text-right">Ações</div>,
     cell: ({ row: { original: product } }) => {
       return (
-        <div className="flex flex-row space-x-1">
+        <div className="flex flex-row justify-end space-x-1">
           <DrawerUpsertProducts
             product={{ ...product, value: Number(product.value) }}
             isUpdate={true}

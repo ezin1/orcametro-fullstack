@@ -26,10 +26,10 @@ export const sellersColumns: ColumnDef<Sellers>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Ações",
+    header: () => <div className="text-right">Ações</div>,
     cell: ({ row: { original: seller } }) => {
       return (
-        <div className="flex flex-row space-x-1">
+        <div className="flex flex-row justify-end space-x-1">
           <DrawerUpsertSeller seller={seller} isUpdate={true} />
           <DeleteSellerButton sellerId={seller.sellerId} />
         </div>
